@@ -8,14 +8,94 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var items: [Grocery] = []
+    @State private var showAddItemView: Bool = false
+    @State private var newItemText: String = ""
+    @State private var newItemDescription: String = ""
+    @State private var isFound: Bool = false
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        //to show logged in users
+        
+        ZStack {
+            Color(red: 0.2, green: 0.79, blue: 0.9, opacity: 0.6)
+                .ignoresSafeArea()
+            
+            VStack{
+                Buddies()
+                
+                NavigationView {
+                    
+                    ZStack{
+                        
+                        Color(red: 0.2, green: 0.79, blue: 0.9, opacity: 0.6)
+                            .ignoresSafeArea()
+                        
+                        List {
+                            ForEach(items, id: \.self) { item in
+                                HStack{
+                                    Text(item.name)
+                                    Text(item.description)
+                                        .fontWeight(.ultraLight)
+                                    
+                                    Spacer()
+                                    Toggle("", isOn: Binding(get: {
+                                        item.isFound
+                                    }, set: { newValue in
+                                        item.isFound = newValue
+                                    }))
+                                    .tint(.orange)
+                                    
+                                }
+                            }
+                            .onDelete { indexSet in
+                                items.remove(atOffsets: indexSet)
+                            }
+                        }
+                        .navigationBarItems(
+                            leading:
+                                Button(action: {}, label: {
+                                    NavigationLink(destination: RecipiesContentView()){
+                                        Group{
+                                            Image(systemName: "fork.knife.circle")
+                                            Text("Recipies")
+                                        }
+                                        
+                                    }
+                                })
+                            
+                            ,trailing:
+                                Button(action: {
+                                    self.showAddItemView = true
+                                }) {
+                                    Image(systemName: "plus")
+                        })
+                        
+                        .alert("Add a Grocery Item", isPresented: $showAddItemView, actions: {
+                            VStack{
+                                TextField("Milk 🐮", text: $newItemText)
+                                TextField("2%", text: $newItemDescription)
+                                Button {
+                                    let grocery = Grocery(name: self.newItemText, description: self.newItemDescription)
+                                    self.items.append(grocery)
+                                    self.newItemText = ""
+                                    self.newItemDescription = ""
+                                    self.showAddItemView = false
+                                } label: {
+                                    Text("Add")
+                                }
+                                
+                            }
+                        })
+                        
+                        
+                    }//Zstack
+                    
+                    
+                }
+                
+            }
         }
-        .padding()
     }
 }
 
@@ -24,3 +104,26 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
+
+
+struct Buddies: View{
+    
+    var body: some View {
+        //to show logged in users
+        HStack{
+            VStack{
+                Image(systemName: "person.crop.circle")
+                Text("Mike")
+            }
+            VStack{
+                Image(systemName: "person.crop.circle")
+                Text("Fev")
+            }
+            VStack{
+                Image(systemName: "person.crop.circle")
+                Text("Yab")
+            }
+        }
+    }
+}
+
