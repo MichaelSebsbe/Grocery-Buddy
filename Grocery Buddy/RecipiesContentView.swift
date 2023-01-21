@@ -8,26 +8,16 @@
 import SwiftUI
 
 struct RecipiesContentView: View {
-    @State var items: [Int] = [2,3,5,7,9,65]
     @State var searchTerm = ""
     @State var recipies: RecipeResponse?
     
     var body: some View {
-        ZStack {
-            Color(red: 0.2, green: 0.79, blue: 0.9, opacity: 0.6)
-                .ignoresSafeArea()
+        VStack{
+            SearchBar(searchText: $searchTerm, recipies: $recipies)
+                .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
             
-            VStack{
-                if let recipies = recipies{
-                    Text(recipies.hits?[0].recipe?.label ?? "nothing")
-                }
-                SearchBar(searchText: $searchTerm, recipies: $recipies)
-                    .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
-                
-                RecipieCards(recipes: $recipies)
-            }
+            RecipieCards(recipes: recipies)
         }
-        
     }
 }
 

@@ -6,10 +6,11 @@
 //
 
 import Foundation
+import SwiftUI
 
 class RequestManager{
     
-   
+
     static func getRecpies(for searchTerm: String, completion: @escaping(RecipeResponse?) -> Void ) {
         
         let apiKey = "6b37262645fc7b8c53f8e4e6e5d727d6%09"
@@ -45,5 +46,17 @@ class RequestManager{
         }
 
         task.resume()
+    }
+    
+    
+    static func loadImageFrom(_ url: String ) {
+        guard let url = URL(string: url) else { return }
+        URLSession.shared.dataTask(with: url) { data, _, error in
+            if let data = data, let image = UIImage(data: data) {
+                DispatchQueue.main.async {
+                    
+                }
+            }
+        }.resume()
     }
 }

@@ -9,21 +9,17 @@ import SwiftUI
 
 
 struct RecipieCards: View {
-    @Binding var recipes: RecipeResponse?
+    var recipes: RecipeResponse?
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: true) {
             VStack{
-                if let recipes = recipes,
-                   let hits = recipes.hits{
-                    List(hits) { hit in
-                        if let hit = hit,
-                            let recipe = hit.recipe {
+                if let recipes = recipes{
+                    ForEach(0..<recipes.hits.count) { index in
+                        if let recipe = recipes.hits[index]?.recipe{
                             Card(recipe: recipe)
                         }
                     }
-                    
-                    //Card()
                 } else{
                     CardBack()
                 }
@@ -34,10 +30,41 @@ struct RecipieCards: View {
 }
 
 
+class CardViewModel {
+    
+}
+
+
 // MARK: - Front of card
 struct Card: View {
-    @State var recipe: Recipe
     
+    var recipe: Recipe
+    
+    var url: String{
+        if let largeImage = recipe.images["LARGE"],
+           let url = largeImage.url{
+            return url
+        }
+        else if let mediumImage = recipe.images["REGULAR"],
+                let url = mediumImage.url{
+            
+            return url
+        } else if let smallImage = recipe.images["SMALL"],
+                  let url = smallImage.url{
+            
+            return url
+        }else {
+            return "https://a.cdn-hotels.com/gdcs/production24/d1597/4f3f77cf-bdca-4ec3-af5d-ea923d74f672.jpg"
+        }
+    }
+    
+    var source: String{
+        if let source = recipe.source{
+            return "👨🏽‍🍳: " + source
+        }else{
+            return ""
+        }
+    }
     
     var body: some View {
         VStack (alignment: .trailing){
@@ -48,27 +75,23 @@ struct Card: View {
                 
                 VStack {
                     HStack(alignment: .center){
-                        Image("cheese")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 126.0)
+                        AsyncImage(url: URL(string: url))
+                        //.resizable()
+                        //.aspectRatio(contentMode: .fit)
+                            .frame(width: 126.0, height: 126.0)
                             .cornerRadius(10)
                             .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
-
-                        if let title = recipe.label{
-                            InfoBox(title: title)
-                                .padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 10))
-                        } else{
-                            InfoBox(title: "Missing")
-                                .padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 10))
-                        }
+                        
+                        InfoBox(recipe: recipe)
+                            .padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 10))
+                        
                         
                     }
                     
                 }
             }
             .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
-            Text("👨🏽‍🍳 ﹫mike_mulu")
+            Text(source)
                 .multilineTextAlignment(.trailing)
                 .italic()
                 .font(.body)
@@ -76,18 +99,155 @@ struct Card: View {
                 .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 15))
             
         }
-        
     }
 }
 
 struct InfoBox: View {
-    var title: String
+    var recipe: Recipe
     var color: Color = .black
+    //unwrappoing all
+    var label: String {
+        if let label = recipe.label{
+            return label
+        } else {
+            return "Misssing"
+        }
+    }
+    
+    var ingredients: Int{
+        recipe.ingredients.count
+    }
+    
+    var calories: String{
+        if let calories = recipe.calories{
+            return "\(Int(round(calories)))"
+        }else{
+            return "N/A"
+        }
+    }
+    
+    var meals: String {
+        if let weight = recipe.totalWeight{
+           return "\( Int( round(weight)) )"
+        }
+        return "-----"
+    }
+    
+    var region: String {
+        guard let cusinesTypes = recipe.cuisineType else { return "" }
+        
+        var emojis = ""
+        
+        for cusine in cusinesTypes{
+            switch cusine{
+            case "american":
+                emojis.append("🇺🇸")
+                break
+            case "asian", "Chinese":
+                emojis.append("🌏")
+                break
+            case "british", "Central Europe":
+                emojis.append("🌍")
+                break
+            case "caribbean":
+                emojis.append("🏝")
+                break
+            case "french":
+                emojis.append("🇫🇷")
+                break
+            case "indian":
+                emojis.append("🇮🇳")
+                break
+            case "italian":
+                emojis.append("🇮🇹")
+                break
+            case "japanese":
+                emojis.append("🇯🇵")
+                break
+            case "kosher":
+                emojis.append("🇮🇱")
+                break
+            case "mediterranean":
+                emojis.append("🇬🇷")
+                break
+            case "mexican":
+                emojis.append("🇲🇽")
+                break
+            case "middle Eastern":
+                emojis.append("🇸🇦")
+                break
+            case "nordic":
+                emojis.append("🇳🇴")
+                break
+            case "south America":
+                emojis.append("🌎")
+                break
+            case "south East Asian":
+                emojis.append("🇮🇩")
+            default:
+                break
+            }
+        }
+        return emojis
+    }
+    
+    var mealTypeImages:[any View] {
+        var mealTypeImages = [any View]()
+        
+        let count = mealTypeImages.count
+  
+        
+        for mealType in recipe.mealType {
+            guard let mealType = mealType else {
+                mealTypeImages.append(Image(systemName: "exclamationmark.circle.fill")
+                    .symbolRenderingMode(.palette)
+                    .foregroundStyle(.white, .pink))
+                
+                continue
+            }
+
+            switch(mealType){
+                case "breakfast":
+                mealTypeImages.append(Image(systemName: "sunrise.fill")
+                    .symbolRenderingMode(.multicolor))
+                    
+                case "lunch/dinner", "dinner":
+                mealTypeImages.append(Image(systemName: "moon.circle.fill")
+                    .symbolRenderingMode(.palette)
+                    .foregroundStyle(.white, .pink))
+                    
+                case "lunch":
+                mealTypeImages.append(Image(systemName: "sun.max.fill")
+                    .symbolRenderingMode(.multicolor)
+                    .foregroundStyle(.white, .pink))
+                    
+                case "snack":
+                mealTypeImages.append(Image(systemName: "s.circle.fill")
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(.white, .pink))
+                
+            case "teatime":
+                mealTypeImages.append(Image(systemName: "custom.cup.and.saucer.fill")
+                    .foregroundColor(.pink)
+                    .symbolRenderingMode(.hierarchical))
+
+
+            default:
+                mealTypeImages.append(Image(systemName: "custom.cup.and.saucer.fill")
+                    .foregroundColor(.pink)
+                    .symbolRenderingMode(.hierarchical))
+
+            }
+        }
+        
+        return mealTypeImages
+        
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 7.0){
             
-            Text(title)
+            Text(label)
                 .font(.title2)
                 .fontWeight(.light)
                 .foregroundColor(color)
@@ -96,29 +256,38 @@ struct InfoBox: View {
                 .shadow(color: .white, radius: 4, x: 0, y: 0)
             //.padding(EdgeInsets(top: 0, leading: 0, bottom: 6, trailing: 0))
             
-            HStack(alignment: .center, spacing: 17.0){
-                //ingredints
-                Image(systemName: "sunrise.fill")
-                    .foregroundColor(.black)
+            HStack(alignment: .center, spacing: 14){
+                
+                MealSymbols(recipe: recipe)
                     .font(.title2)
-                    .symbolRenderingMode(.multicolor)
                     .padding(EdgeInsets(top: 0, leading: 7, bottom: 0, trailing: 0))
-                Image(systemName: "leaf.circle.fill")
-                //.foregroundColor(Color(red: 0.02, green: 0.87, blue: 0.62))
+                //lunch,dinner,bf
+                    
+                HealthSymbols(healthLabels:InfoBoxVM(recipe: recipe).healthLables)
                     .font(.title2)
-                    .symbolRenderingMode(.palette)
-                    .foregroundStyle(.white, Color(red: 0.02, green: 0.87, blue: 0.62))
-                Image(systemName: "leaf.circle.fill")
-                //.foregroundColor(.yellow)
-                    .font(.title2)
-                    .symbolRenderingMode(.palette)
-                    .foregroundStyle(.white, .yellow)
-                Image(systemName: "globe.americas.fill")
+//                Image(systemName: "leaf.circle.fill")
+//                //.foregroundColor(Color(red: 0.02, green: 0.87, blue: 0.62))
+//
+//                    .symbolRenderingMode(.palette)
+//                    .foregroundStyle(.white, Color(red: 0.02, green: 0.87, blue: 0.62))
+//                Image(systemName: "leaf.circle.fill")
+//                //.foregroundColor(.yellow)
+//                    .font(.title2)
+//                    .symbolRenderingMode(.palette)
+//                    .foregroundStyle(.white, .yellow)
+                
+                Text(region)
                     .font(.title2)
                     .foregroundColor(Color(red: 0.2, green: 0.0, blue: 0.6))
+                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 6))
+                
+                //                Image(systemName: "globe.americas.fill")
+                //                    .font(.title2)
+                //                    .foregroundColor(Color(red: 0.2, green: 0.0, blue: 0.6))
+                //                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 6))
+                
                 // Text("🇺🇸")
                 //     .font(.title)
-                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 6))
             }
             .padding(2)
             .background(Color(red: 0.6, green: 0.4, blue: 0.6))
@@ -127,7 +296,7 @@ struct InfoBox: View {
             
             
             HStack(alignment: .center, spacing: 23.0) {
-                Label("9", systemImage: "cart.fill.badge.plus")
+                Label("\(ingredients)", systemImage: "cart.fill.badge.plus")
                 //.foregroundColor(Color(red: 01, green: 0.35, blue: 0.4))
                     .font(.subheadline)
                     .fontWeight(.medium)
@@ -146,14 +315,14 @@ struct InfoBox: View {
             }
             
             HStack (alignment: .center, spacing: 13.0){
-                Label("10,000", systemImage: "bolt.circle.fill")
+                Label(calories, systemImage: "bolt.circle.fill")
                     .font(.callout)
                     .fontWeight(.semibold)
                     .symbolRenderingMode(.palette)
                     .italic()
                     .foregroundStyle(.white, Color(red: 0.02, green: 0.87, blue: 0.62))
                 
-                Label("8", systemImage: "fork.knife.circle.fill")
+                Label(meals, systemImage: "fork.knife.circle.fill")
                     .font(.callout)
                     .fontWeight(.semibold)
                     .italic()
@@ -166,6 +335,150 @@ struct InfoBox: View {
     }
     
 }
+
+class InfoBoxVM {
+    let recipe: Recipe
+    
+    init(recipe: Recipe) {
+        self.recipe = recipe
+    }
+    
+    var healthLables:[String]{
+        guard var healthLabels = recipe.healthLabels else{return [String]()}
+        
+        var labels = [String]()
+        
+        for i in  0..<healthLabels.count {
+            let label = healthLabels[i]
+            switch(label){
+            case "Gluten-Free", "Keto-Friendly", "Kosher", "Vegan", "Vegetarian":
+                labels.append(label)
+            default:
+                continue
+            }
+        }
+        
+        return labels
+    }
+}
+
+class HealthSymbolsAssist {
+    var healthLabels: [String]
+    
+    init(healthLabels: [String]) {
+        self.healthLabels = healthLabels
+    }
+}
+
+struct HealthSymbols: View{
+    
+    var body: some View{
+        
+        HStack{
+            
+            ForEach(0..<HealthSymbolsAssist().healthLabels.count) { i in
+                let healthLabel = healthLabels[i]
+                
+                switch (healthLabel){
+                case "Keto-Friendly":
+                    Image(systemName: "k.square.fill")
+                        .symbolRenderingMode(.multicolor)
+                        .foregroundColor(.cyan)
+                case "Gluten-Free":
+                    Image(systemName: "g.square.fill")
+                        .symbolRenderingMode(.multicolor)
+                        .foregroundColor(.cyan)
+                case "Kosher":
+                    Image(systemName: "kipsign.circle.fill")
+                        .symbolRenderingMode(.multicolor)
+                        .foregroundColor(.cyan)
+                case  "Vegan":
+                    Image(systemName: "leaf.fill")
+                        .symbolRenderingMode(.multicolor)
+                        .foregroundColor(.yellow)
+                case "Vegetarian":
+                    Image(systemName: "leaf.fill")
+                        .symbolRenderingMode(.multicolor)
+                        .foregroundColor(.green)
+                
+                    
+                default:
+                    //EmptyView()
+                    Image(systemName: "q.square.fill")
+                        .symbolRenderingMode(.multicolor)
+                        .foregroundColor(.cyan)
+                }
+                
+            }
+        }
+        
+    }
+}
+
+struct MealSymbols: View{
+    var recipe: Recipe
+    
+    var body: some View{
+        
+        HStack(spacing: -10) {
+            ForEach(0..<recipe.mealType.count) { i in
+                let mealType = recipe.mealType[i]
+                
+                if (mealType == nil){
+                    Image(systemName: "exclamationmark.circle.fill")
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(.white, .pink)
+    
+                } else {
+                    switch(mealType){
+                    case "breakfast":
+                        Image(systemName: "sunrise.fill")
+                            .symbolRenderingMode(.multicolor)
+                        
+                    case "lunch/dinner":
+                        Image(systemName: "moon.circle.fill")
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(.white, .pink)
+                        
+                        Image(systemName: "sun.max.fill")
+                            .symbolRenderingMode(.multicolor)
+                            .foregroundStyle(.white, .pink)
+                        
+                        
+                    case "dinner":
+                        Image(systemName: "moon.circle.fill")
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(.white, .pink)
+                        
+                    case "lunch":
+                        Image(systemName: "sun.max.fill")
+                            .symbolRenderingMode(.multicolor)
+                            .foregroundStyle(.white, .pink)
+                        
+                    case "snack":
+                        Image(systemName: "popcorn.fill")
+                            .symbolRenderingMode(.multicolor)
+                            .foregroundStyle(.yellow)
+                        
+                    case "teatime":
+                        Image(systemName: "custom.cup.and.saucer.fill")
+                            .foregroundColor(.pink)
+                            .symbolRenderingMode(.hierarchical)
+
+
+                    default:
+                        Image(systemName: "custom.cup.and.saucer.fill")
+                            .foregroundColor(.pink)
+                            .symbolRenderingMode(.hierarchical)
+
+                    }
+                }
+            }
+        }
+    }
+}
+
+
 
 // MARK: - Back of Card
 
@@ -460,9 +773,8 @@ struct NFRow3: View {
                     .fontWeight(.light)
                     .lineLimit(/*@START_MENU_TOKEN@*/5/*@END_MENU_TOKEN@*/)
                     .minimumScaleFactor(0.6)
-                    
+                
             }
-            
             
         }
         

@@ -12,7 +12,7 @@ struct RecipeResponse: Codable{
     let from: Int? //this returns count starts from
     let to: Int? //and ends
     let _links: Links?
-    let hits: [Hit]?
+    let hits: [Hit?]
 }
 
 struct Links: Codable{
@@ -20,9 +20,7 @@ struct Links: Codable{
     //let next: Link
 }
 
-struct Hit: Codable, Identifiable {
-    var id: Int?
-    
+struct Hit: Codable{
     let recipe: Recipe?
     let _links: Links?
 }
@@ -32,7 +30,8 @@ struct Link: Codable {
     let title: String?
 }
 
-struct Recipe: Codable {
+struct Recipe: Codable{
+    
     let uri: String?
     let label: String? //title of recipe
     let image: String?

@@ -17,85 +17,73 @@ struct ContentView: View {
     var body: some View {
         //to show logged in users
         
-        ZStack {
-            Color(red: 0.2, green: 0.79, blue: 0.9, opacity: 0.6)
-                .ignoresSafeArea()
+        
+        VStack{
+            Buddies()
             
-            VStack{
-                Buddies()
+            NavigationView {
                 
-                NavigationView {
-                    
-                    ZStack{
-                        
-                        Color(red: 0.2, green: 0.79, blue: 0.9, opacity: 0.6)
-                            .ignoresSafeArea()
-                        
-                        List {
-                            ForEach(items, id: \.self) { item in
-                                HStack{
-                                    Text(item.name)
-                                    Text(item.description)
-                                        .fontWeight(.ultraLight)
-                                    
-                                    Spacer()
-                                    Toggle("", isOn: Binding(get: {
-                                        item.isFound
-                                    }, set: { newValue in
-                                        item.isFound = newValue
-                                    }))
-                                    .tint(.orange)
-                                    
-                                }
-                            }
-                            .onDelete { indexSet in
-                                items.remove(atOffsets: indexSet)
-                            }
-                        }
-                        .navigationBarItems(
-                            leading:
-                                Button(action: {}, label: {
-                                    NavigationLink(destination: RecipiesContentView()){
-                                        Group{
-                                            Image(systemName: "fork.knife.circle")
-                                            Text("Recipies")
-                                        }
-                                        
-                                    }
-                                })
+                List {
+                    ForEach(items, id: \.self) { item in
+                        HStack{
+                            Text(item.name)
+                            Text(item.description)
+                                .fontWeight(.ultraLight)
                             
-                            ,trailing:
-                                Button(action: {
-                                    self.showAddItemView = true
-                                }) {
-                                    Image(systemName: "plus")
-                        })
-                        
-                        .alert("Add a Grocery Item", isPresented: $showAddItemView, actions: {
-                            VStack{
-                                TextField("Milk 🐮", text: $newItemText)
-                                TextField("2%", text: $newItemDescription)
-                                Button {
-                                    let grocery = Grocery(name: self.newItemText, description: self.newItemDescription)
-                                    self.items.append(grocery)
-                                    self.newItemText = ""
-                                    self.newItemDescription = ""
-                                    self.showAddItemView = false
-                                } label: {
-                                    Text("Add")
+                            Spacer()
+                            Toggle("", isOn: Binding(get: {
+                                item.isFound
+                            }, set: { newValue in
+                                item.isFound = newValue
+                            }))
+                            .tint(.orange)
+                            
+                        }
+                    }
+                    .onDelete { indexSet in
+                        items.remove(atOffsets: indexSet)
+                    }
+                }
+                .navigationBarItems(
+                    leading:
+                        Button(action: {}, label: {
+                            NavigationLink(destination: RecipiesContentView()){
+                                Group{
+                                    Image(systemName: "fork.knife.circle")
+                                    Text("Recipies")
                                 }
                                 
                             }
                         })
-                        
-                        
-                    }//Zstack
                     
-                    
-                }
+                    ,trailing:
+                        Button(action: {
+                            self.showAddItemView = true
+                        }) {
+                            Image(systemName: "plus")
+                        })
+                
+                .alert("Add a Grocery Item", isPresented: $showAddItemView, actions: {
+                    VStack{
+                        TextField("Milk 🐮", text: $newItemText)
+                        TextField("2%", text: $newItemDescription)
+                        Button {
+                            let grocery = Grocery(name: self.newItemText, description: self.newItemDescription)
+                            self.items.append(grocery)
+                            self.newItemText = ""
+                            self.newItemDescription = ""
+                            self.showAddItemView = false
+                        } label: {
+                            Text("Add")
+                        }
+                        
+                    }
+                })
                 
             }
+            
         }
+        
     }
 }
 
