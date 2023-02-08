@@ -7,23 +7,21 @@
 
 import SwiftUI
 
-
 struct RecipieCards: View {
     var recipes: RecipeResponse?
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: true) {
-            VStack{
-                if let recipes = recipes{
-                    ForEach(0..<recipes.hits.count) { index in
-                        if let recipe = recipes.hits[index]?.recipe{
-                            Card(recipe: recipe)
-                        }
-                    }
-                } else{
-                    CardBack()
-                }
+            if let recipes = recipes{
                 
+                let recipesCount = recipes.hits.count
+                ForEach(0..<recipesCount, id: \.self) { index in
+                    if let recipe = recipes.hits[index]?.recipe{
+                        Card(recipe: recipe)
+                    }
+                }
+            } else{
+                CardBack()
             }
         }
     }
@@ -114,7 +112,7 @@ struct InfoBox: View {
         }
     }
     
-    var ingredients: Int{
+    var ingredientsCount: Int{
         recipe.ingredients.count
     }
     
@@ -126,11 +124,11 @@ struct InfoBox: View {
         }
     }
     
-    var meals: String {
+    var mealWeight: String {
         if let weight = recipe.totalWeight{
-           return "\( Int( round(weight)) )"
+           return "\( Int( round(weight)))g"
         }
-        return "-----"
+        return "-----g"
     }
     
     var region: String {
@@ -191,62 +189,62 @@ struct InfoBox: View {
         return emojis
     }
     
-    var mealTypeImages:[any View] {
-        var mealTypeImages = [any View]()
-        
-        let count = mealTypeImages.count
-  
-        
-        for mealType in recipe.mealType {
-            guard let mealType = mealType else {
-                mealTypeImages.append(Image(systemName: "exclamationmark.circle.fill")
-                    .symbolRenderingMode(.palette)
-                    .foregroundStyle(.white, .pink))
-                
-                continue
-            }
-
-            switch(mealType){
-                case "breakfast":
-                mealTypeImages.append(Image(systemName: "sunrise.fill")
-                    .symbolRenderingMode(.multicolor))
-                    
-                case "lunch/dinner", "dinner":
-                mealTypeImages.append(Image(systemName: "moon.circle.fill")
-                    .symbolRenderingMode(.palette)
-                    .foregroundStyle(.white, .pink))
-                    
-                case "lunch":
-                mealTypeImages.append(Image(systemName: "sun.max.fill")
-                    .symbolRenderingMode(.multicolor)
-                    .foregroundStyle(.white, .pink))
-                    
-                case "snack":
-                mealTypeImages.append(Image(systemName: "s.circle.fill")
-                        .symbolRenderingMode(.palette)
-                        .foregroundStyle(.white, .pink))
-                
-            case "teatime":
-                mealTypeImages.append(Image(systemName: "custom.cup.and.saucer.fill")
-                    .foregroundColor(.pink)
-                    .symbolRenderingMode(.hierarchical))
-
-
-            default:
-                mealTypeImages.append(Image(systemName: "custom.cup.and.saucer.fill")
-                    .foregroundColor(.pink)
-                    .symbolRenderingMode(.hierarchical))
-
-            }
-        }
-        
-        return mealTypeImages
-        
-    }
+//    var mealTypeImages:[any View] {
+//        var mealTypeImages = [any View]()
+//
+//        let count = mealTypeImages.count
+//
+//
+//        for mealType in recipe.mealType {
+//            guard let mealType = mealType else {
+//                mealTypeImages.append(Image(systemName: "exclamationmark.circle.fill")
+//                    .symbolRenderingMode(.palette)
+//                    .foregroundStyle(.white, .pink))
+//
+//                continue
+//            }
+//
+//            switch(mealType){
+//                case "breakfast":
+//                mealTypeImages.append(Image(systemName: "sunrise.fill")
+//                    .symbolRenderingMode(.multicolor))
+//
+//                case "lunch/dinner", "dinner":
+//                mealTypeImages.append(Image(systemName: "moon.circle.fill")
+//                    .symbolRenderingMode(.palette)
+//                    .foregroundStyle(.white, .pink))
+//
+//                case "lunch":
+//                mealTypeImages.append(Image(systemName: "sun.max.fill")
+//                    .symbolRenderingMode(.multicolor)
+//                    .foregroundStyle(.white, .pink))
+//
+//                case "snack":
+//                mealTypeImages.append(Image(systemName: "s.circle.fill")
+//                        .symbolRenderingMode(.palette)
+//                        .foregroundStyle(.white, .pink))
+//
+//            case "teatime":
+//                mealTypeImages.append(Image(systemName: "custom.cup.and.saucer.fill")
+//                    .foregroundColor(.pink)
+//                    .symbolRenderingMode(.hierarchical))
+//
+//
+//            default:
+//                mealTypeImages.append(Image(systemName: "custom.cup.and.saucer.fill")
+//                    .foregroundColor(.pink)
+//                    .symbolRenderingMode(.hierarchical))
+//
+//            }
+//        }
+//
+//        return mealTypeImages
+//
+//    }
     
     var body: some View {
+        
         VStack(alignment: .leading, spacing: 7.0){
-            
             Text(label)
                 .font(.title2)
                 .fontWeight(.light)
@@ -263,7 +261,7 @@ struct InfoBox: View {
                     .padding(EdgeInsets(top: 0, leading: 7, bottom: 0, trailing: 0))
                 //lunch,dinner,bf
                     
-                HealthSymbols(healthLabels:InfoBoxVM(recipe: recipe).healthLables)
+                HealthSymbols(healthLabels: recipe.healthLabels)
                     .font(.title2)
 //                Image(systemName: "leaf.circle.fill")
 //                //.foregroundColor(Color(red: 0.02, green: 0.87, blue: 0.62))
@@ -296,7 +294,7 @@ struct InfoBox: View {
             
             
             HStack(alignment: .center, spacing: 23.0) {
-                Label("\(ingredients)", systemImage: "cart.fill.badge.plus")
+                Label("\(ingredientsCount)", systemImage: "cart.fill.badge.plus")
                 //.foregroundColor(Color(red: 01, green: 0.35, blue: 0.4))
                     .font(.subheadline)
                     .fontWeight(.medium)
@@ -322,7 +320,7 @@ struct InfoBox: View {
                     .italic()
                     .foregroundStyle(.white, Color(red: 0.02, green: 0.87, blue: 0.62))
                 
-                Label(meals, systemImage: "fork.knife.circle.fill")
+                Label(mealWeight, systemImage: "scalemass.fill")
                     .font(.callout)
                     .fontWeight(.semibold)
                     .italic()
@@ -344,7 +342,7 @@ class InfoBoxVM {
     }
     
     var healthLables:[String]{
-        guard var healthLabels = recipe.healthLabels else{return [String]()}
+        guard let healthLabels = recipe.healthLabels else{return [String]()}
         
         var labels = [String]()
         
@@ -362,53 +360,49 @@ class InfoBoxVM {
     }
 }
 
-class HealthSymbolsAssist {
-    var healthLabels: [String]
-    
-    init(healthLabels: [String]) {
-        self.healthLabels = healthLabels
-    }
-}
 
 struct HealthSymbols: View{
+    var healthLabels: [String]?
     
-    var body: some View{
-        
-        HStack{
-            
-            ForEach(0..<HealthSymbolsAssist().healthLabels.count) { i in
-                let healthLabel = healthLabels[i]
-                
-                switch (healthLabel){
-                case "Keto-Friendly":
-                    Image(systemName: "k.square.fill")
-                        .symbolRenderingMode(.multicolor)
-                        .foregroundColor(.cyan)
-                case "Gluten-Free":
-                    Image(systemName: "g.square.fill")
-                        .symbolRenderingMode(.multicolor)
-                        .foregroundColor(.cyan)
-                case "Kosher":
-                    Image(systemName: "kipsign.circle.fill")
-                        .symbolRenderingMode(.multicolor)
-                        .foregroundColor(.cyan)
-                case  "Vegan":
-                    Image(systemName: "leaf.fill")
-                        .symbolRenderingMode(.multicolor)
-                        .foregroundColor(.yellow)
-                case "Vegetarian":
-                    Image(systemName: "leaf.fill")
-                        .symbolRenderingMode(.multicolor)
-                        .foregroundColor(.green)
-                
-                    
-                default:
-                    //EmptyView()
-                    Image(systemName: "q.square.fill")
-                        .symbolRenderingMode(.multicolor)
-                        .foregroundColor(.cyan)
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false){
+            HStack{
+                if let healthLabels = healthLabels{
+                    ForEach(0..<healthLabels.count, id: \.self) { i in
+                        let healthLabel = healthLabels[i]
+                        
+                        switch (healthLabel){
+                        case "Keto-Friendly":
+                            Image(systemName: "k.square.fill")
+                                .symbolRenderingMode(.multicolor)
+                                .foregroundColor(.cyan)
+                        case "Gluten-Free":
+                            Image(systemName: "g.square.fill")
+                                .symbolRenderingMode(.palette)
+                                .foregroundStyle(.black, .white)
+                        case "Kosher":
+                            Image(systemName: "kipsign.circle.fill")
+                                .symbolRenderingMode(.multicolor)
+                                .foregroundColor(.cyan)
+                        case  "Vegan":
+                            Image(systemName: "leaf.fill")
+                                .symbolRenderingMode(.monochrome)
+                                .foregroundColor(.yellow)
+                        case "Vegetarian":
+                            Image(systemName: "leaf.fill")
+                                .symbolRenderingMode(.multicolor)
+                                .foregroundColor(.green)
+                            
+                            
+                        default:
+                            EmptyView()
+                            //                        Image(systemName: "q.square.fill")
+                            //                            .symbolRenderingMode(.multicolor)
+                            //                            .foregroundColor(.cyan)
+                        }
+                        
+                    }
                 }
-                
             }
         }
         
@@ -461,13 +455,13 @@ struct MealSymbols: View{
                             .foregroundStyle(.yellow)
                         
                     case "teatime":
-                        Image(systemName: "custom.cup.and.saucer.fill")
+                        Image(systemName: "cup.and.saucer.fill")
                             .foregroundColor(.pink)
                             .symbolRenderingMode(.hierarchical)
 
 
                     default:
-                        Image(systemName: "custom.cup.and.saucer.fill")
+                        Image(systemName: "cup.and.saucer.fill")
                             .foregroundColor(.pink)
                             .symbolRenderingMode(.hierarchical)
 

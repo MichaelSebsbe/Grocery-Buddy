@@ -52,7 +52,7 @@ struct Recipe: Codable{
     let totalWeight: Float?
     let cuisineType: [String]?
     let mealType: [String?]
-    let dishType: [String?]
+    let dishType: [String]?
     let instructions: [String?]?
     let tags: [String?]?
     let externalId: String?

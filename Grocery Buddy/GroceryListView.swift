@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct GroceryListView: View {
     @State private var items: [Grocery] = []
     @State private var showAddItemView: Bool = false
     @State private var newItemText: String = ""
@@ -89,11 +89,12 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        GroceryListView()
     }
 }
 
 
+// this will be used to show friends
 struct Buddies: View{
     
     var body: some View {

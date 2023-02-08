@@ -10,7 +10,7 @@
 		AD57A5662967D8AA0057A28D /* RecipeResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD57A5652967D8AA0057A28D /* RecipeResponse.swift */; };
 		AD57A5682967D9190057A28D /* RequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD57A5672967D9190057A28D /* RequestManager.swift */; };
 		AD6324AB2953F27E00131E6C /* Grocery_BuddyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6324AA2953F27E00131E6C /* Grocery_BuddyApp.swift */; };
-		AD6324AD2953F27E00131E6C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6324AC2953F27E00131E6C /* ContentView.swift */; };
+		AD6324AD2953F27E00131E6C /* GroceryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6324AC2953F27E00131E6C /* GroceryListView.swift */; };
 		AD6324AF2953F27F00131E6C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AD6324AE2953F27F00131E6C /* Assets.xcassets */; };
 		AD6324B22953F27F00131E6C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AD6324B12953F27F00131E6C /* Preview Assets.xcassets */; };
 		AD6324B9295510D800131E6C /* RecipiesContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6324B8295510D700131E6C /* RecipiesContentView.swift */; };
@@ -25,7 +25,7 @@
 		AD57A5672967D9190057A28D /* RequestManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestManager.swift; sourceTree = "<group>"; };
 		AD6324A72953F27E00131E6C /* Grocery Buddy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Grocery Buddy.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AD6324AA2953F27E00131E6C /* Grocery_BuddyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Grocery_BuddyApp.swift; sourceTree = "<group>"; };
-		AD6324AC2953F27E00131E6C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		AD6324AC2953F27E00131E6C /* GroceryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroceryListView.swift; sourceTree = "<group>"; };
 		AD6324AE2953F27F00131E6C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AD6324B12953F27F00131E6C /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		AD6324B8295510D700131E6C /* RecipiesContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipiesContentView.swift; sourceTree = "<group>"; };
@@ -84,7 +84,7 @@
 			children = (
 				AD6324BA2955111C00131E6C /* Models  */,
 				AD6324AA2953F27E00131E6C /* Grocery_BuddyApp.swift */,
-				AD6324AC2953F27E00131E6C /* ContentView.swift */,
+				AD6324AC2953F27E00131E6C /* GroceryListView.swift */,
 				AD6324B8295510D700131E6C /* RecipiesContentView.swift */,
 				ADD929CD2965252100B2186E /* RecipeDetails.swift */,
 				AD6324AE2953F27F00131E6C /* Assets.xcassets */,
@@ -190,7 +190,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AD6324AD2953F27E00131E6C /* ContentView.swift in Sources */,
+				AD6324AD2953F27E00131E6C /* GroceryListView.swift in Sources */,
 				AD6324AB2953F27E00131E6C /* Grocery_BuddyApp.swift in Sources */,
 				AD6324B9295510D800131E6C /* RecipiesContentView.swift in Sources */,
 				ADCA7B84295FEEA70064E7D0 /* RecipeCards.swift in Sources */,

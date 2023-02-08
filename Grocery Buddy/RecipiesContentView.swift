@@ -54,7 +54,8 @@ struct SearchBar: View {
                         }
                     }
                 }
-
+            
+            //cancel Button
             Button(action: {
                 searchText = ""
        
