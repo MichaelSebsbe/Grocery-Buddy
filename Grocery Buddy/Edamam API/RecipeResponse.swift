@@ -58,6 +58,7 @@ struct Recipe: Codable{
     let externalId: String?
     let totalNutrients: [String:NutrientsInfo]?
     let totalDaily: [String:NutrientsInfo]? // percentage of each nutirent a person needs per day
+    let totalTime: Int?
     //let digest: Digest
 }
    
@@ -86,6 +87,8 @@ struct Ingredient: Codable {
     let measure: String?
     let food: String?
     let weight: Float?
+    let foodCategory: String?
     let foodId:  String?
+    let image: String?///url of the image
 }
 

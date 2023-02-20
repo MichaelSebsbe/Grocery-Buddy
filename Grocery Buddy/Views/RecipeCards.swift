@@ -11,32 +11,37 @@ struct RecipieCards: View {
     var recipes: RecipeResponse?
     
     var body: some View {
+        
         ScrollView(.vertical, showsIndicators: true) {
             if let recipes = recipes{
                 
                 let recipesCount = recipes.hits.count
                 ForEach(0..<recipesCount, id: \.self) { index in
-                    if let recipe = recipes.hits[index]?.recipe{
-                        Card(recipe: recipe)
+                    if let recipe = recipes.hits[index]?.recipe,
+                       let imageURL = recipe.images["REGULAR"]!.url!,
+                       let foodName = recipe.label{
+                        let ingredients = recipe.ingredients
+                        
+                        NavigationLink(destination: RecipeDetailView(title: foodName, imageURL: imageURL, ingredients: ingredients).navigationBarBackButtonHidden()){
+                            Card(recipe: recipe)
+                            
+                        }.buttonStyle(PlainButtonStyle())
                     }
                 }
             } else{
-                CardBack()
+                Text("search from our 10,000 recipes!")
             }
         }
+        
     }
-}
-
-
-class CardViewModel {
-    
 }
 
 
 // MARK: - Front of card
 struct Card: View {
+    @State private var isFaceUp: Bool = true
     
-    var recipe: Recipe
+    let recipe: Recipe
     
     var url: String{
         if let largeImage = recipe.images["LARGE"],
@@ -64,46 +69,61 @@ struct Card: View {
         }
     }
     
+    
     var body: some View {
-        VStack (alignment: .trailing){
-            ZStack(alignment: .leading){
-                Color(red: 1, green: 0.8, blue: 0.2)
-                    .cornerRadius(10)
-                    .shadow(color: Color(red: 0.2, green: 0.28, blue: 0.30, opacity: 0.3), radius: 2, x: 5, y: 5)
-                
-                VStack {
-                    HStack(alignment: .center){
-                        AsyncImage(url: URL(string: url))
-                        //.resizable()
-                        //.aspectRatio(contentMode: .fit)
+        if (isFaceUp){
+            VStack (alignment: .trailing){
+                ZStack(alignment: .leading){
+                    Color(red: 1, green: 0.8, blue: 0.2)
+                        .cornerRadius(10)
+                        .shadow(color: Color(red: 0.2, green: 0.28, blue: 0.30, opacity: 0.3), radius: 2, x: 5, y: 5)
+                    
+                    VStack {
+                        HStack(alignment: .center){
+                            AsyncImage(url: URL(string: url)) { image in
+                                image.resizable()
+                            } placeholder: {
+                                
+                             ProgressView()
+                            }
                             .frame(width: 126.0, height: 126.0)
                             .cornerRadius(10)
                             .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
-                        
-                        InfoBox(recipe: recipe)
-                            .padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 10))
-                        
-                        
+
+                            InfoBox(recipe: recipe)
+                                .padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 10))
+                        }
                     }
-                    
                 }
+                .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
+                Text(source)
+                    .multilineTextAlignment(.trailing)
+                    .italic()
+                    .font(.body)
+                    .fontWeight(.light)
+                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 15))
+                
             }
-            .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
-            Text(source)
-                .multilineTextAlignment(.trailing)
-                .italic()
-                .font(.body)
-                .fontWeight(.light)
-                .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 15))
-            
+//            .onTapGesture {
+//                //navigate to details page
+//            }
+//            .gesture(LongPressGesture().onEnded({ _ in
+//                isFaceUp.toggle()
+//            }))
+        }else{
+            CardBack()
+//                .onTapGesture {
+//                    isFaceUp.toggle()
+//                }
         }
     }
+
 }
 
 struct InfoBox: View {
     var recipe: Recipe
     var color: Color = .black
-    //unwrappoing all
+    //unwrapping all
     var label: String {
         if let label = recipe.label{
             return label
@@ -126,7 +146,7 @@ struct InfoBox: View {
     
     var mealWeight: String {
         if let weight = recipe.totalWeight{
-           return "\( Int( round(weight)))g"
+            return "\( Int( round(weight)))g"
         }
         return "-----g"
     }
@@ -188,70 +208,91 @@ struct InfoBox: View {
         }
         return emojis
     }
-    
-//    var mealTypeImages:[any View] {
-//        var mealTypeImages = [any View]()
-//
-//        let count = mealTypeImages.count
-//
-//
-//        for mealType in recipe.mealType {
-//            guard let mealType = mealType else {
-//                mealTypeImages.append(Image(systemName: "exclamationmark.circle.fill")
-//                    .symbolRenderingMode(.palette)
-//                    .foregroundStyle(.white, .pink))
-//
-//                continue
-//            }
-//
-//            switch(mealType){
-//                case "breakfast":
-//                mealTypeImages.append(Image(systemName: "sunrise.fill")
-//                    .symbolRenderingMode(.multicolor))
-//
-//                case "lunch/dinner", "dinner":
-//                mealTypeImages.append(Image(systemName: "moon.circle.fill")
-//                    .symbolRenderingMode(.palette)
-//                    .foregroundStyle(.white, .pink))
-//
-//                case "lunch":
-//                mealTypeImages.append(Image(systemName: "sun.max.fill")
-//                    .symbolRenderingMode(.multicolor)
-//                    .foregroundStyle(.white, .pink))
-//
-//                case "snack":
-//                mealTypeImages.append(Image(systemName: "s.circle.fill")
-//                        .symbolRenderingMode(.palette)
-//                        .foregroundStyle(.white, .pink))
-//
-//            case "teatime":
-//                mealTypeImages.append(Image(systemName: "custom.cup.and.saucer.fill")
-//                    .foregroundColor(.pink)
-//                    .symbolRenderingMode(.hierarchical))
-//
-//
-//            default:
-//                mealTypeImages.append(Image(systemName: "custom.cup.and.saucer.fill")
-//                    .foregroundColor(.pink)
-//                    .symbolRenderingMode(.hierarchical))
-//
-//            }
-//        }
-//
-//        return mealTypeImages
-//
-//    }
+    var prepTime: String?{
+        if let prepTime = recipe.totalTime{
+            let hrs = prepTime / 60
+            let mins = prepTime % 60
+            switch (hrs, mins){
+            case (0, 0):
+                return nil
+           
+            case (0, _):
+                return "\(mins)Mins"
+              
+            case (_, 0):
+                return "\(hrs)Hrs"
+            
+            case (_, _):
+                return "\(hrs)Hrs \(mins)Mins"
+            
+            }
+        }
+        return nil
+    }
+    //    var mealTypeImages:[any View] {
+    //        var mealTypeImages = [any View]()
+    //
+    //        let count = mealTypeImages.count
+    //
+    //
+    //        for mealType in recipe.mealType {
+    //            guard let mealType = mealType else {
+    //                mealTypeImages.append(Image(systemName: "exclamationmark.circle.fill")
+    //                    .symbolRenderingMode(.palette)
+    //                    .foregroundStyle(.white, .pink))
+    //
+    //                continue
+    //            }
+    //
+    //            switch(mealType){
+    //                case "breakfast":
+    //                mealTypeImages.append(Image(systemName: "sunrise.fill")
+    //                    .symbolRenderingMode(.multicolor))
+    //
+    //                case "lunch/dinner", "dinner":
+    //                mealTypeImages.append(Image(systemName: "moon.circle.fill")
+    //                    .symbolRenderingMode(.palette)
+    //                    .foregroundStyle(.white, .pink))
+    //
+    //                case "lunch":
+    //                mealTypeImages.append(Image(systemName: "sun.max.fill")
+    //                    .symbolRenderingMode(.multicolor)
+    //                    .foregroundStyle(.white, .pink))
+    //
+    //                case "snack":
+    //                mealTypeImages.append(Image(systemName: "s.circle.fill")
+    //                        .symbolRenderingMode(.palette)
+    //                        .foregroundStyle(.white, .pink))
+    //
+    //            case "teatime":
+    //                mealTypeImages.append(Image(systemName: "custom.cup.and.saucer.fill")
+    //                    .foregroundColor(.pink)
+    //                    .symbolRenderingMode(.hierarchical))
+    //
+    //
+    //            default:
+    //                mealTypeImages.append(Image(systemName: "custom.cup.and.saucer.fill")
+    //                    .foregroundColor(.pink)
+    //                    .symbolRenderingMode(.hierarchical))
+    //
+    //            }
+    //        }
+    //
+    //        return mealTypeImages
+    //
+    //    }
     
     var body: some View {
         
         VStack(alignment: .leading, spacing: 7.0){
             Text(label)
                 .font(.title2)
-                .fontWeight(.light)
+                .fontWeight(.heavy)
                 .foregroundColor(color)
                 .lineLimit(2)
-                .minimumScaleFactor(0.6)
-                .shadow(color: .white, radius: 4, x: 0, y: 0)
+                .minimumScaleFactor(0.3)
+                .textCase(.uppercase)
+                //.shadow(color: .white, radius: 4, x: 0, y: 0)
             //.padding(EdgeInsets(top: 0, leading: 0, bottom: 6, trailing: 0))
             
             HStack(alignment: .center, spacing: 14){
@@ -260,19 +301,19 @@ struct InfoBox: View {
                     .font(.title2)
                     .padding(EdgeInsets(top: 0, leading: 7, bottom: 0, trailing: 0))
                 //lunch,dinner,bf
-                    
+                
                 HealthSymbols(healthLabels: recipe.healthLabels)
                     .font(.title2)
-//                Image(systemName: "leaf.circle.fill")
-//                //.foregroundColor(Color(red: 0.02, green: 0.87, blue: 0.62))
-//
-//                    .symbolRenderingMode(.palette)
-//                    .foregroundStyle(.white, Color(red: 0.02, green: 0.87, blue: 0.62))
-//                Image(systemName: "leaf.circle.fill")
-//                //.foregroundColor(.yellow)
-//                    .font(.title2)
-//                    .symbolRenderingMode(.palette)
-//                    .foregroundStyle(.white, .yellow)
+                //                Image(systemName: "leaf.circle.fill")
+                //                //.foregroundColor(Color(red: 0.02, green: 0.87, blue: 0.62))
+                //
+                //                    .symbolRenderingMode(.palette)
+                //                    .foregroundStyle(.white, Color(red: 0.02, green: 0.87, blue: 0.62))
+                //                Image(systemName: "leaf.circle.fill")
+                //                //.foregroundColor(.yellow)
+                //                    .font(.title2)
+                //                    .symbolRenderingMode(.palette)
+                //                    .foregroundStyle(.white, .yellow)
                 
                 Text(region)
                     .font(.title2)
@@ -301,15 +342,14 @@ struct InfoBox: View {
                     .symbolRenderingMode(.palette)
                     .foregroundStyle(Color(red: 01, green: 0.35, blue: 0.4), .white)
                 
-                Label("1:40", systemImage: "hourglass")
-                    .font(.body)
-                    .fontWeight(.medium)
-                    .symbolRenderingMode(.palette)
-                    .foregroundStyle(.white, Color(red: 0.02, green: 0.87, blue: 0.62))
-                    .shadow(color: Color(red: 1, green: 1, blue: 1), radius: 1.2, x: 0, y: 0)
-                
-                
-                
+                if let prepTime = prepTime{
+                    Label(prepTime, systemImage: "hourglass")
+                        .font(.body)
+                        //.fontWeight(.light)
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(.white, Color(red: 0.02, green: 0.87, blue: 0.62))
+                        //.shadow(color: Color(red: 1, green: 1, blue: 1), radius: 1.2, x: 0, y: 0)
+                }
             }
             
             HStack (alignment: .center, spacing: 13.0){
@@ -334,32 +374,32 @@ struct InfoBox: View {
     
 }
 
-class InfoBoxVM {
-    let recipe: Recipe
-    
-    init(recipe: Recipe) {
-        self.recipe = recipe
-    }
-    
-    var healthLables:[String]{
-        guard let healthLabels = recipe.healthLabels else{return [String]()}
-        
-        var labels = [String]()
-        
-        for i in  0..<healthLabels.count {
-            let label = healthLabels[i]
-            switch(label){
-            case "Gluten-Free", "Keto-Friendly", "Kosher", "Vegan", "Vegetarian":
-                labels.append(label)
-            default:
-                continue
-            }
-        }
-        
-        return labels
-    }
-}
-
+//class InfoBoxVM {
+//    let recipe: Recipe
+//
+//    init(recipe: Recipe) {
+//        self.recipe = recipe
+//    }
+//
+//    var healthLables:[String]{
+//        guard let healthLabels = recipe.healthLabels else{return [String]()}
+//
+//        var labels = [String]()
+//
+//        for i in  0..<healthLabels.count {
+//            let label = healthLabels[i]
+//            switch(label){
+//            case "Gluten-Free", "Keto-Friendly", "Kosher", "Vegan", "Vegetarian":
+//                labels.append(label)
+//            default:
+//                continue
+//            }
+//        }
+//
+//        return labels
+//    }
+//}
+//
 
 struct HealthSymbols: View{
     var healthLabels: [String]?
@@ -392,7 +432,10 @@ struct HealthSymbols: View{
                             Image(systemName: "leaf.fill")
                                 .symbolRenderingMode(.multicolor)
                                 .foregroundColor(.green)
-                            
+                        case "Pescatarian":
+                            Image(systemName: "fish.fill")
+                                .symbolRenderingMode(.monochrome)
+                                .foregroundColor(.yellow)
                             
                         default:
                             EmptyView()
@@ -415,14 +458,14 @@ struct MealSymbols: View{
     var body: some View{
         
         HStack(spacing: -10) {
-            ForEach(0..<recipe.mealType.count) { i in
+            ForEach(0..<recipe.mealType.count, id: \.self) { i in
                 let mealType = recipe.mealType[i]
                 
                 if (mealType == nil){
                     Image(systemName: "exclamationmark.circle.fill")
                         .symbolRenderingMode(.palette)
                         .foregroundStyle(.white, .pink)
-    
+                    
                 } else {
                     switch(mealType){
                     case "breakfast":
@@ -458,13 +501,13 @@ struct MealSymbols: View{
                         Image(systemName: "cup.and.saucer.fill")
                             .foregroundColor(.pink)
                             .symbolRenderingMode(.hierarchical)
-
-
+                        
+                        
                     default:
                         Image(systemName: "cup.and.saucer.fill")
                             .foregroundColor(.pink)
                             .symbolRenderingMode(.hierarchical)
-
+                        
                     }
                 }
             }

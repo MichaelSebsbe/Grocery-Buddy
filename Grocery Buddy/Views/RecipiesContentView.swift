@@ -12,11 +12,13 @@ struct RecipiesContentView: View {
     @State var recipies: RecipeResponse?
     
     var body: some View {
-        VStack{
-            SearchBar(searchText: $searchTerm, recipies: $recipies)
-                .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
-            
-            RecipieCards(recipes: recipies)
+        NavigationView{
+            VStack{
+                SearchBar(searchText: $searchTerm, recipies: $recipies)
+                    .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
+                
+                RecipieCards(recipes: recipies)
+            }
         }
     }
 }

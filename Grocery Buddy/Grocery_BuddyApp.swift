@@ -9,9 +9,21 @@ import SwiftUI
 
 @main
 struct Grocery_BuddyApp: App {
+    
     var body: some Scene {
         WindowGroup {
-            GroceryListView()
+            TabView {
+                RecipiesContentView()
+                    .tabItem {
+                        Label("Recipies", systemImage: "fork.knife.circle.fill")
+                            
+                    }
+                GroceryListView()
+                    .tabItem {
+                        Label("Cart", systemImage: "cart.fill")
+                    }
+                   
+            }
         }
     }
 }

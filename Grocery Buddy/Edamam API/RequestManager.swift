@@ -13,10 +13,12 @@ class RequestManager{
 
     static func getRecpies(for searchTerm: String, completion: @escaping(RecipeResponse?) -> Void ) {
         
+        let urlSearchTerm = searchTerm.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+        
         let apiKey = "6b37262645fc7b8c53f8e4e6e5d727d6%09"
         let appID = "eef20ebb"
         
-        let url = URL(string: "https://api.edamam.com/api/recipes/v2?type=public&q=\(searchTerm)&app_id=\(appID)&app_key=\(apiKey)")!
+        let url = URL(string: "https://api.edamam.com/api/recipes/v2?type=public&q=\(urlSearchTerm)&app_id=\(appID)&app_key=\(apiKey)")!
         let request = URLRequest(url: url)
         
         //var recipes: RecipeResponse?

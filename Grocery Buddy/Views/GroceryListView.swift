@@ -44,25 +44,11 @@ struct GroceryListView: View {
                         items.remove(atOffsets: indexSet)
                     }
                 }
-                .navigationBarItems(
-                    leading:
-                        Button(action: {}, label: {
-                            NavigationLink(destination: RecipiesContentView()){
-                                Group{
-                                    Image(systemName: "fork.knife.circle")
-                                    Text("Recipies")
-                                }
-                                
-                            }
-                        })
-                    
-                    ,trailing:
-                        Button(action: {
-                            self.showAddItemView = true
-                        }) {
-                            Image(systemName: "plus")
-                        })
-                
+                .navigationBarItems(trailing: Button(action: {
+                    self.showAddItemView = true
+                }) {
+                    Image(systemName: "plus")
+                })
                 .alert("Add a Grocery Item", isPresented: $showAddItemView, actions: {
                     VStack{
                         TextField("Milk 🐮", text: $newItemText)
