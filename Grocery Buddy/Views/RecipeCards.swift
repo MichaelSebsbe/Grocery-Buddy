@@ -19,10 +19,12 @@ struct RecipieCards: View {
                 ForEach(0..<recipesCount, id: \.self) { index in
                     if let recipe = recipes.hits[index]?.recipe,
                        let imageURL = recipe.images["REGULAR"]!.url!,
-                       let foodName = recipe.label{
+                       let foodName = recipe.label,
+                       let recipeURL = recipe.url {
+                        
                         let ingredients = recipe.ingredients
                         
-                        NavigationLink(destination: RecipeDetailView(title: foodName, imageURL: imageURL, ingredients: ingredients).navigationBarBackButtonHidden()){
+                        NavigationLink(destination: RecipeDetailView(title: foodName, imageURL: imageURL, ingredients: ingredients, recipeURL: recipeURL).navigationBarBackButtonHidden()){
                             Card(recipe: recipe)
                             
                         }.buttonStyle(PlainButtonStyle())
@@ -286,7 +288,7 @@ struct InfoBox: View {
         
         VStack(alignment: .leading, spacing: 7.0){
             Text(label)
-                .font(.title2)
+                .font(.title)
                 .fontWeight(.heavy)
                 .foregroundColor(color)
                 .lineLimit(2)
@@ -299,7 +301,7 @@ struct InfoBox: View {
                 
                 MealSymbols(recipe: recipe)
                     .font(.title2)
-                    .padding(EdgeInsets(top: 0, leading: 7, bottom: 0, trailing: 0))
+                    .padding(.leading, 7)
                 //lunch,dinner,bf
                 
                 HealthSymbols(healthLabels: recipe.healthLabels)
@@ -318,8 +320,7 @@ struct InfoBox: View {
                 Text(region)
                     .font(.title2)
                     .foregroundColor(Color(red: 0.2, green: 0.0, blue: 0.6))
-                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 6))
-                
+                    .padding(.trailing, 6)
                 //                Image(systemName: "globe.americas.fill")
                 //                    .font(.title2)
                 //                    .foregroundColor(Color(red: 0.2, green: 0.0, blue: 0.6))
@@ -403,11 +404,24 @@ struct InfoBox: View {
 
 struct HealthSymbols: View{
     var healthLabels: [String]?
+    var sanitizedHealthLabels: [String]?{
+        let neededLabels = ["Keto-Friendly", "Gluten-Free", "Kosher", "Vegan", "Vegetarian", "Pescatarian"]
+        
+        if var sanitizedHealtLabels = healthLabels{
+            sanitizedHealtLabels = sanitizedHealtLabels.filter({ label in
+                neededLabels.contains(label)
+            })
+            
+            return sanitizedHealtLabels
+        }
+        
+        return nil
+    }
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false){
             HStack{
-                if let healthLabels = healthLabels{
+                if let healthLabels = sanitizedHealthLabels{
                     ForEach(0..<healthLabels.count, id: \.self) { i in
                         let healthLabel = healthLabels[i]
                         
@@ -438,6 +452,7 @@ struct HealthSymbols: View{
                                 .foregroundColor(.yellow)
                             
                         default:
+                            
                             EmptyView()
                             //                        Image(systemName: "q.square.fill")
                             //                            .symbolRenderingMode(.multicolor)

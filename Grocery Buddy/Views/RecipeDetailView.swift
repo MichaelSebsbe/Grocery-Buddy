@@ -6,46 +6,58 @@
 //
 
 import SwiftUI
+import WebKit
 
 struct RecipeDetailView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    @State private var selected: Int = 0
+    
     let title: String
     let imageURL: String
     let ingredients: [Ingredient]
-    @State private var selected: Int = 0
+    var sanitizedIngredients: [Ingredient]{
+        var ingredientIDs = [String]()
+        var sanitaizedIngredients = [Ingredient]()
+        
+        for ingredient in ingredients {
+            if let id = ingredient.foodId{
+                if(!ingredientIDs.contains(id)){
+                    ingredientIDs.append(id)
+                    sanitaizedIngredients.append(ingredient)
+                }
+            }
+        }
+        
+        return sanitaizedIngredients
+    }
+    let recipeURL: String
+    
     //let ingredients: [String]
     var body: some View {
         VStack{
-            Button {
-                self.presentationMode.wrappedValue.dismiss()
-            } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .font(.system(size: 30))
-            }.frame(maxWidth: .infinity, alignment: .leading)
-                .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
+            TopButtons(presentationMode: presentationMode, url: recipeURL)
+                .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
             
             ZStack{
                 Rectangle()
                     .foregroundColor(.yellow)
                     .cornerRadius(20)
-                    .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
-                
+    
                 VStack() {
                     HStack (alignment: .center){
-                        
                         Text(title)
-                            .font(.system(size:37))
+                            .font(.system(size:40))
                             .font(.largeTitle)
                             .fontWeight(.heavy)
                             .minimumScaleFactor(0.4)
-                           // .lineLimit(4)
+                        // .lineLimit(4)
                             .if {
                                 title.count < 41 ? $0.lineLimit(3) : $0.lineLimit(4)
                             }
                             .multilineTextAlignment(.trailing)
                             .textCase(.uppercase)
                         Divider()
-                            .frame(width: 3, height: 125)
+                            .frame(width: 4, height: 125)
                             .overlay(.white)
                         
                         AsyncImage(url: URL(string: imageURL)) { image in
@@ -55,36 +67,32 @@ struct RecipeDetailView: View {
                         }
                         .frame(width: 125,height: 125)
                         .cornerRadius(15)
-                        
-                        //.font(.)
                     }
-                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    
                     Divider()
-                        .frame(height: 3)
+                        .frame(height: 4)
                         .overlay(.black)
-                        .padding(EdgeInsets(top: -19, leading: 0, bottom: 0, trailing: 0))
+                        .offset(x: 0, y: -15)
                     
                     ScrollView(.vertical, showsIndicators: false){
-                        ForEach(ingredients, id: \.self.foodId){ ingredient in
+                        ForEach(sanitizedIngredients, id: \.self.foodId){ ingredient in
                             IngredientView(selectCount: $selected, ingredient: ingredient)
-                            
-                        }
-                        .padding(.top, 4)
-                    }.ignoresSafeArea()
-                        .padding(.top, -24)
+                        }.padding(EdgeInsets(top: 10, leading: 3, bottom: 10, trailing: 0))
+                        
+                    }.padding(.top, -23).padding(.bottom,-16) //for flush scroll view
                     
-                    
-                    Spacer()
-                }.padding(EdgeInsets(top: 15, leading: 30, bottom: -8, trailing: 30))
+                }.padding()
                 
+                Spacer()
                 
-            }
+            }.padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
+            
             HStack{
                 Button("Add All") {
                     //add all ingridents to grocery cart
                 }
                 
-                Text("\(selected) out of \(ingredients.count)")
+                Text("\(selected) out of \(sanitizedIngredients.count)")
                     .frame(maxWidth: .infinity, alignment: .center)
                     .fontWeight(.semibold)
                 Button("Done"){
@@ -98,41 +106,38 @@ struct RecipeDetailView: View {
                 .controlSize(.large)
             
         }
-        
     }
 }
 
+
 struct RecipeDetailView_Previews: PreviewProvider {
-    //    let ingredients = [Ingredient(text: "Mayonnaise", quantity: 2.5, measure: "Cups", food: "Mayonnaise", weight: 3, foodCategory: "dsf", foodId: "22", image: "https://i2-prod.dailystar.co.uk/incoming/article23201324.ece/ALTERNATES/s615b/0_Bowl-of-mayonnaise-with-spoon-embedded-view-from-above.jpg")]
-    
-    //    var ingredients: [Ingredient] {
-    //        [ingredient, ingredient, ingredient, ingredient, ingredient, ingredient]
-    //    }
-    
+
     static var previews: some View {
-        RecipeDetailView(title:"12345 7890 2345 789 123456 89", imageURL:"https://www.tasteofhome.com/wp-content/uploads/2018/01/exps28800_UG143377D12_18_1b_RMS.jpg", ingredients: [
-            Ingredient(text: "Mayonnaise", quantity: 2.5, measure: "Cups", food: "Mayonnaise with shshsd", weight: 3, foodCategory: "dsf", foodId: "22", image: "https://i2-prod.dailystar.co.uk/incoming/article23201324.ece/ALTERNATES/s615b/0_Bowl-of-mayonnaise-with-spoon-embedded-view-from-above.jpg"),
+        RecipeDetailView(title:"I just wanted to count the digits of th", imageURL:"https://3.bp.blogspot.com/-MPmB8FO8yjA/WUviA9tctaI/AAAAAAAALK8/LFjrerEl4yMiRvsnj-Wd0gggNYxA2dGOACLcBGAs/s1600/22Salu%2BBinagoongang-Lechon-Karekare.JPG", ingredients: [
+            Ingredient(text: "Mayonnaise", quantity: 2.5, measure: "Cuperroni", food: "Mayonnaise with shshsd", weight: 3, foodCategory: "dsf", foodId: "22", image: "https://i2-prod.dailystar.co.uk/incoming/article23201324.ece/ALTERNATES/s615b/0_Bowl-of-mayonnaise-with-spoon-embedded-view-from-above.jpg"),
             Ingredient(text: "Mayonnaise", quantity: 2.5, measure: "Cups", food: "Mayonnaise", weight: 3, foodCategory: "dsf", foodId: "23", image: "https://i2-prod.dailystar.co.uk/incoming/article23201324.ece/ALTERNATES/s615b/0_Bowl-of-mayonnaise-with-spoon-embedded-view-from-above.jpg"),
             Ingredient(text: "Mayonnaise", quantity: 2.5, measure: "Cups", food: "Mayonnaise", weight: 3, foodCategory: "dsf", foodId: "24", image: "https://i2-prod.dailystar.co.uk/incoming/article23201324.ece/ALTERNATES/s615b/0_Bowl-of-mayonnaise-with-spoon-embedded-view-from-above.jpg"),
-            Ingredient(text: "Mayonnaise", quantity: 2.5, measure: "Cups", food: "Mayonnaise", weight: 3, foodCategory: "dsf", foodId: "25", image: "https://i2-prod.dailystar.co.uk/incoming/article23201324.ece/ALTERNATES/s615b/0_Bowl-of-mayonnaise-with-spoon-embedded-view-from-above.jpg"),
-            Ingredient(text: "Mayonnaise", quantity: 2.5, measure: "Cups", food: "Mayonnaise", weight: 3, foodCategory: "dsf", foodId: "23", image: "https://i2-prod.dailystar.co.uk/incoming/article23201324.ece/ALTERNATES/s615b/0_Bowl-of-mayonnaise-with-spoon-embedded-view-from-above.jpg"),
-            Ingredient(text: "Mayonnaise", quantity: 2.5, measure: "Cups", food: "Mayonnaise", weight: 3, foodCategory: "dsf", foodId: "23", image: "https://i2-prod.dailystar.co.uk/incoming/article23201324.ece/ALTERNATES/s615b/0_Bowl-of-mayonnaise-with-spoon-embedded-view-from-above.jpg")
+            Ingredient(text: "Mayonnaise", quantity: 2.5, measure: "Cuperroni", food: "Mayo", weight: 3, foodCategory: "dsf", foodId: "25", image: "https://i2-prod.dailystar.co.uk/incoming/article23201324.ece/ALTERNATES/s615b/0_Bowl-of-mayonnaise-with-spoon-embedded-view-from-above.jpg"),
+            Ingredient(text: "Mayonnaise", quantity: 2.5, measure: "Cups", food: "Mayonnaise", weight: 3, foodCategory: "dsf", foodId: "26", image: "https://i2-prod.dailystar.co.uk/incoming/article23201324.ece/ALTERNATES/s615b/0_Bowl-of-mayonnaise-with-spoon-embedded-view-from-above.jpg"),
+            Ingredient(text: "Mayonnaise", quantity: 2.5, measure: "Cups", food: "Mayonnaise", weight: 3, foodCategory: "dsf", foodId: "27", image: "https://i2-prod.dailystar.co.uk/incoming/article23201324.ece/ALTERNATES/s615b/0_Bowl-of-mayonnaise-with-spoon-embedded-view-from-above.jpg")
             
-        ] ).previewDevice("iPhone 14")
+        ],
+                         recipeURL: "https://google.com"
+        ).previewDevice("iPhone 14")
         
     }
     
 }
 
 struct IngredientView: View {
-    @State private var isSelected = false
+    @State var isSelected = false
     @Binding var selectCount: Int
     var ingredient: Ingredient
     var imageURL: String {
         ingredient.image ?? "default image url"
     }
     var label: String {
-        ingredient.food ?? "****************Missing Data****************"
+        ingredient.food ?? "???????"
     }
     var measurement: String {
         if let measure = ingredient.measure {
@@ -166,38 +171,25 @@ struct IngredientView: View {
     
     var body: some View {
         HStack{
-           // if (isSelected){
-                AsyncImage(url: URL(string: imageURL)) { image in
-                    image.resizable()
-                } placeholder: {
-                    ProgressView()
-                }
-                .frame(width: 75,height: 75)
-                .clipShape(Circle())
-                .overlay(
-                    Circle()
-                        .if{
-                            if(isSelected){
-                                $0.stroke(Color.mint,lineWidth:5)
-                            } else {
-                                $0.stroke(Color.white,lineWidth:5)
-                            }
+            // if (isSelected){
+            AsyncImage(url: URL(string: imageURL)) { image in
+                image.resizable()
+            } placeholder: {
+                ProgressView()
+            }
+            .frame(width: 75,height: 75)
+            .clipShape(Circle())
+            .overlay(
+                Circle()
+                    .if{
+                        if(isSelected){
+                            $0.stroke(Color.mint,lineWidth:5)
+                        } else {
+                            $0.stroke(Color.white,lineWidth:5)
                         }
-                        
-                )
-          //  } else {
-//                AsyncImage(url: URL(string: imageURL)) { image in
-//                    image.resizable()
-//                } placeholder: {
-//                    ProgressView()
-//                }
-//                .frame(width: 75,height: 75)
-//                .clipShape(Circle())
-//                .overlay(
-//                    Circle()
-//                        .stroke(Color.white,lineWidth:5)
-//                )
-           // }
+                    }
+                
+            )
             
             Text(label)
                 .font(.system(size: 20))
@@ -206,17 +198,23 @@ struct IngredientView: View {
                 .multilineTextAlignment(.leading)
                 .lineLimit(3)
                 .minimumScaleFactor(0.4)
+                .if(isSelected){
+                    $0.foregroundColor(.white)
+                }
+            
             Spacer()
             
             if(quantity != "0"){
                 Text("| \(quantity) \(measurement)")
-                    .font(.system(size: 12))
+                    .font(.system(size: 14))
                     .multilineTextAlignment(.leading)
-                    .fontWeight(.semibold)
+                    .fontWeight(.bold)
                     .textCase(.uppercase)
+                    .if(isSelected){
+                        $0.foregroundColor(.white)
+                    }
             }
         }
-        .padding(EdgeInsets(top: 0, leading: 5, bottom: 0, trailing: 5))
         .onTapGesture {
             isSelected.toggle()
             if(isSelected){
@@ -240,5 +238,45 @@ extension View{
         } else {
             self
         }
+    }
+}
+
+
+
+struct TopButtons: View {
+    @Binding var presentationMode: PresentationMode
+    @State private var showWebView = false
+    let url: String
+    var body: some View {
+        HStack {
+            Button {
+                self.$presentationMode.wrappedValue.dismiss()
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.system(size: 30))
+                    .foregroundColor(.red)
+            }.frame(maxWidth: .infinity, alignment: .leading)
+            
+            Button {
+                showWebView.toggle()
+            } label: {
+                ZStack{
+                    HStack {
+                        Image(systemName: "safari")
+                            .font(.system(size: 30))
+                        Text("Read Full Recipe")
+                            .fontWeight(.heavy)
+                    }
+                }.foregroundColor(.mint)
+            }
+            .sheet(isPresented: $showWebView) {
+                if let url = URL(string: url){
+                    RecipeWebView(url: url)
+                }
+            }
+            
+            
+        }
+      
     }
 }

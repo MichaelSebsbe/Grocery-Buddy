@@ -18,6 +18,7 @@
 		AD6324BC2955113500131E6C /* Grocery.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6324BB2955113500131E6C /* Grocery.swift */; };
 		AD897A31295E51B700E4A783 /* Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD897A30295E51B700E4A783 /* Icons.swift */; };
 		ADCA7B84295FEEA70064E7D0 /* RecipeCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCA7B83295FEEA70064E7D0 /* RecipeCards.swift */; };
+		ADDA47F929A5C05B0026FA0E /* RecipeWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDA47F829A5C05B0026FA0E /* RecipeWebView.swift */; };
 		ADE0EF75299B39670065E7FD /* RecipeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE0EF74299B39670065E7FD /* RecipeDetailView.swift */; };
 /* End PBXBuildFile section */
 
@@ -34,6 +35,7 @@
 		AD6324BB2955113500131E6C /* Grocery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Grocery.swift; sourceTree = "<group>"; };
 		AD897A30295E51B700E4A783 /* Icons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icons.swift; sourceTree = "<group>"; };
 		ADCA7B83295FEEA70064E7D0 /* RecipeCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeCards.swift; sourceTree = "<group>"; };
+		ADDA47F829A5C05B0026FA0E /* RecipeWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeWebView.swift; sourceTree = "<group>"; };
 		ADE0EF74299B39670065E7FD /* RecipeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -116,6 +118,7 @@
 				AD6324AC2953F27E00131E6C /* GroceryListView.swift */,
 				AD6324B8295510D700131E6C /* RecipiesContentView.swift */,
 				ADE0EF74299B39670065E7FD /* RecipeDetailView.swift */,
+				ADDA47F829A5C05B0026FA0E /* RecipeWebView.swift */,
 				AD5ECA4F299B3B15007A80D5 /* AppColors.swift */,
 				ADCA7B83295FEEA70064E7D0 /* RecipeCards.swift */,
 				AD57A56A2967E3BD0057A28D /* Recipes Search */,
@@ -196,6 +199,7 @@
 				AD6324AD2953F27E00131E6C /* GroceryListView.swift in Sources */,
 				ADE0EF75299B39670065E7FD /* RecipeDetailView.swift in Sources */,
 				AD6324AB2953F27E00131E6C /* Grocery_BuddyApp.swift in Sources */,
+				ADDA47F929A5C05B0026FA0E /* RecipeWebView.swift in Sources */,
 				AD5ECA50299B3B15007A80D5 /* AppColors.swift in Sources */,
 				AD6324B9295510D800131E6C /* RecipiesContentView.swift in Sources */,
 				ADCA7B84295FEEA70064E7D0 /* RecipeCards.swift in Sources */,
