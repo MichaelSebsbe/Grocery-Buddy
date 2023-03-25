@@ -9,6 +9,9 @@ import SwiftUI
 
 @main
 struct Grocery_BuddyApp: App {
+    let persistenceController = PersistenceController.shared
+    
+    @Environment(\.scenePhase) var scenePhase // detects change when app moves to environment
     
     var body: some Scene {
         WindowGroup {
@@ -16,14 +19,19 @@ struct Grocery_BuddyApp: App {
                 RecipiesContentView()
                     .tabItem {
                         Label("Recipies", systemImage: "fork.knife.circle.fill")
-                            
                     }
+                    .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                    
                 GroceryListView()
                     .tabItem {
                         Label("Cart", systemImage: "cart.fill")
                     }
-                   
+                    .environment(\.managedObjectContext, persistenceController.container.viewContext)
             }
         }
+        .onChange(of: scenePhase) { newValue in
+            persistenceController.save() //saves whenever app goes to background and fo
+        }
     }
+    
 }
