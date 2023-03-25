@@ -10,7 +10,8 @@ import WebKit
 
 struct RecipeDetailView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-    @State private var selected: Int = 0
+    @State private var selectedCount: Int = 0
+    @State private var allSelected = false
     
     let title: String
     let imageURL: String
@@ -76,7 +77,7 @@ struct RecipeDetailView: View {
                     
                     ScrollView(.vertical, showsIndicators: false){
                         ForEach(sanitizedIngredients, id: \.self.foodId){ ingredient in
-                            IngredientView(selectCount: $selected, ingredient: ingredient)
+                            IngredientView(allSelected: $allSelected, selectCount: $selectedCount, ingredient: ingredient)
                         }.padding(EdgeInsets(top: 10, leading: 3, bottom: 10, trailing: 0))
                         
                     }.padding(.top, -23).padding(.bottom,-16) //for flush scroll view
@@ -90,9 +91,14 @@ struct RecipeDetailView: View {
             HStack{
                 Button("Add All") {
                     //add all ingridents to grocery cart
+                    withAnimation(.easeIn(duration: 0.5)){
+                        allSelected = true
+                        selectedCount = sanitizedIngredients.count
+                    }
+                    
                 }
                 
-                Text("\(selected) out of \(sanitizedIngredients.count)")
+                Text("\(selectedCount) out of \(sanitizedIngredients.count)")
                     .frame(maxWidth: .infinity, alignment: .center)
                     .fontWeight(.semibold)
                 Button("Done"){
@@ -130,8 +136,10 @@ struct RecipeDetailView_Previews: PreviewProvider {
 }
 
 struct IngredientView: View {
-    @State var isSelected = false
+    @State var isSelected: Bool = false
+    @Binding var allSelected: Bool
     @Binding var selectCount: Int
+    
     var ingredient: Ingredient
     var imageURL: String {
         ingredient.image ?? "default image url"
@@ -180,15 +188,14 @@ struct IngredientView: View {
             .frame(width: 75,height: 75)
             .clipShape(Circle())
             .overlay(
-                Circle()
-                    .if{
-                        if(isSelected){
-                            $0.stroke(Color.mint,lineWidth:5)
-                        } else {
-                            $0.stroke(Color.white,lineWidth:5)
-                        }
+                Circle().if{
+                    if(isSelected || allSelected){
+                        $0.stroke(Color.mint,lineWidth:5)
+                    } else {
+                        $0.stroke(Color.white, lineWidth: 5)
                     }
-                
+                }
+                    
             )
             
             Text(label)
@@ -198,8 +205,8 @@ struct IngredientView: View {
                 .multilineTextAlignment(.leading)
                 .lineLimit(3)
                 .minimumScaleFactor(0.4)
-                .if(isSelected){
-                    $0.foregroundColor(.white)
+                .if(isSelected || allSelected){
+                    $0.foregroundColor(.mint)
                 }
             
             Spacer()
@@ -210,21 +217,34 @@ struct IngredientView: View {
                     .multilineTextAlignment(.leading)
                     .fontWeight(.bold)
                     .textCase(.uppercase)
-                    .if(isSelected){
-                        $0.foregroundColor(.white)
+                    .if(isSelected || allSelected){
+                        $0.foregroundColor(.mint)
                     }
             }
-        }
-        .onTapGesture {
-            isSelected.toggle()
-            if(isSelected){
-                selectCount += 1
-            }else{
-                selectCount -= 1
+        }.if{
+            if(isSelected || allSelected){
+                $0.background(LinearGradient(gradient: Gradient(colors: [.yellow, .white]), startPoint: .trailing, endPoint: .leading).cornerRadius(50))
+                    
+            } else {
+                $0
             }
         }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            withAnimation(.easeIn(duration: 0.5)){
+                isSelected.toggle()
+                if(isSelected){
+                    selectCount += 1
+                }else{
+                    selectCount -= 1
+                }
+            }
+           
+        }
+
         
     }
+
 }
 
 extension View{
@@ -255,28 +275,39 @@ struct TopButtons: View {
                 Image(systemName: "xmark.circle.fill")
                     .font(.system(size: 30))
                     .foregroundColor(.red)
-            }.frame(maxWidth: .infinity, alignment: .leading)
-            
+            }
+            //.frame(maxWidth: .infinity, alignment: .leading)
+            Spacer()
             Button {
                 showWebView.toggle()
             } label: {
-                ZStack{
-                    HStack {
-                        Image(systemName: "safari")
-                            .font(.system(size: 30))
-                        Text("Read Full Recipe")
-                            .fontWeight(.heavy)
-                    }
-                }.foregroundColor(.mint)
+                
+                HStack {
+                    Image(systemName: "safari")
+                        .font(.system(size: 30))
+                    Text("Read Full Recipe")
+                        .fontWeight(.heavy)
+                        .lineLimit(1)
+                }
+                .foregroundColor(.mint)
             }
             .sheet(isPresented: $showWebView) {
                 if let url = URL(string: url){
                     RecipeWebView(url: url)
                 }
             }
-            
-            
         }
-      
     }
 }
+//
+//struct TopViewProvider: PreviewProvider{
+//    typealias Previews = TopButtons
+//
+//    static var previews: TopButtons{
+//
+//    }
+//
+//
+//
+//
+//}

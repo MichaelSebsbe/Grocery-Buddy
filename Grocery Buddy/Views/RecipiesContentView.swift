@@ -10,14 +10,28 @@ import SwiftUI
 struct RecipiesContentView: View {
     @State var searchTerm = ""
     @State var recipies: RecipeResponse?
+    @State var scrollToTop = false
     
     var body: some View {
         NavigationView{
             VStack{
-                SearchBar(searchText: $searchTerm, recipies: $recipies)
+                SearchBar(searchText: $searchTerm, recipies: $recipies, hasNewResults: $scrollToTop)
                     .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
                 
-                RecipieCards(recipes: recipies)
+                ScrollViewReader { proxy in
+                    ScrollView(.vertical, showsIndicators: true) {
+                        RecipieCardsScrollView(recipes: recipies)
+                        
+                    }.onChange(of: scrollToTop) { _ in
+                        scrollToTop = false
+                        withAnimation {
+                            proxy.scrollTo(0)
+                        
+                        }
+                        
+                    }
+                }
+                
             }
         }
     }
@@ -36,6 +50,7 @@ struct RecipiesContentView_Previews: PreviewProvider {
 struct SearchBar: View {
     @Binding var searchText: String
     @Binding var recipies: RecipeResponse?
+    @Binding var hasNewResults: Bool
     
     var body: some View {
         HStack {
@@ -51,6 +66,7 @@ struct SearchBar: View {
                         
                         if let recipies = recipies{
                             self.recipies = recipies
+                            self.hasNewResults = true
                         }else{
                             print("RequestManager.getRecpies: Error fetching requests")
                         }

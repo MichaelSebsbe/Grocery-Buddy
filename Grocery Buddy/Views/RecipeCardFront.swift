@@ -1,46 +1,13 @@
 //
-//  Cards.swift
+//  RecipeCard.swift
 //  Grocery Buddy
 //
-//  Created by Michael Sebsbe on 12/30/22.
+//  Created by Michael Sebsbe on 3/7/23.
 //
 
 import SwiftUI
 
-struct RecipieCards: View {
-    var recipes: RecipeResponse?
-    
-    var body: some View {
-        
-        ScrollView(.vertical, showsIndicators: true) {
-            if let recipes = recipes{
-                
-                let recipesCount = recipes.hits.count
-                ForEach(0..<recipesCount, id: \.self) { index in
-                    if let recipe = recipes.hits[index]?.recipe,
-                       let imageURL = recipe.images["REGULAR"]!.url!,
-                       let foodName = recipe.label,
-                       let recipeURL = recipe.url {
-                        
-                        let ingredients = recipe.ingredients
-                        
-                        NavigationLink(destination: RecipeDetailView(title: foodName, imageURL: imageURL, ingredients: ingredients, recipeURL: recipeURL).navigationBarBackButtonHidden()){
-                            Card(recipe: recipe)
-                            
-                        }.buttonStyle(PlainButtonStyle())
-                    }
-                }
-            } else{
-                Text("search from our 10,000 recipes!")
-            }
-        }
-        
-    }
-}
-
-
-// MARK: - Front of card
-struct Card: View {
+struct RecipeCardFront: View {
     @State private var isFaceUp: Bool = true
     
     let recipe: Recipe
@@ -86,13 +53,13 @@ struct Card: View {
                                 image.resizable()
                             } placeholder: {
                                 
-                             ProgressView()
+                                ProgressView()
                             }
                             .frame(width: 126.0, height: 126.0)
                             .cornerRadius(10)
                             .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
-
-                            InfoBox(recipe: recipe)
+                            
+                            InfoBox(isFaceUp: $isFaceUp, recipe: recipe)
                                 .padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 10))
                         }
                     }
@@ -103,34 +70,44 @@ struct Card: View {
                     .italic()
                     .font(.body)
                     .fontWeight(.light)
-                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 15))
+                    .padding(EdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 15))
                 
             }
 //            .onTapGesture {
-//                //navigate to details page
+//                //
 //            }
-//            .gesture(LongPressGesture().onEnded({ _ in
+//            .onLongPressGesture(perform: {
 //                isFaceUp.toggle()
-//            }))
+//            })
+
         }else{
-            CardBack()
-//                .onTapGesture {
-//                    isFaceUp.toggle()
-//                }
+            if let totalWeight = recipe.totalWeight,
+               let totalNutrients = recipe.totalNutrients,
+               let totalDaily = recipe.totalDaily{
+                CardBack(totalWeight: totalWeight, totalNutrients: totalNutrients, totalDaily: totalDaily)
+                    .onTapGesture {
+                        isFaceUp.toggle()
+                    }
+                
+            }
         }
     }
 
 }
 
+
+
 struct InfoBox: View {
+    @Binding var isFaceUp: Bool
     var recipe: Recipe
     var color: Color = .black
+    
     //unwrapping all
     var label: String {
         if let label = recipe.label{
             return label
         } else {
-            return "Misssing"
+            return "Missing"
         }
     }
     
@@ -231,64 +208,13 @@ struct InfoBox: View {
         }
         return nil
     }
-    //    var mealTypeImages:[any View] {
-    //        var mealTypeImages = [any View]()
-    //
-    //        let count = mealTypeImages.count
-    //
-    //
-    //        for mealType in recipe.mealType {
-    //            guard let mealType = mealType else {
-    //                mealTypeImages.append(Image(systemName: "exclamationmark.circle.fill")
-    //                    .symbolRenderingMode(.palette)
-    //                    .foregroundStyle(.white, .pink))
-    //
-    //                continue
-    //            }
-    //
-    //            switch(mealType){
-    //                case "breakfast":
-    //                mealTypeImages.append(Image(systemName: "sunrise.fill")
-    //                    .symbolRenderingMode(.multicolor))
-    //
-    //                case "lunch/dinner", "dinner":
-    //                mealTypeImages.append(Image(systemName: "moon.circle.fill")
-    //                    .symbolRenderingMode(.palette)
-    //                    .foregroundStyle(.white, .pink))
-    //
-    //                case "lunch":
-    //                mealTypeImages.append(Image(systemName: "sun.max.fill")
-    //                    .symbolRenderingMode(.multicolor)
-    //                    .foregroundStyle(.white, .pink))
-    //
-    //                case "snack":
-    //                mealTypeImages.append(Image(systemName: "s.circle.fill")
-    //                        .symbolRenderingMode(.palette)
-    //                        .foregroundStyle(.white, .pink))
-    //
-    //            case "teatime":
-    //                mealTypeImages.append(Image(systemName: "custom.cup.and.saucer.fill")
-    //                    .foregroundColor(.pink)
-    //                    .symbolRenderingMode(.hierarchical))
-    //
-    //
-    //            default:
-    //                mealTypeImages.append(Image(systemName: "custom.cup.and.saucer.fill")
-    //                    .foregroundColor(.pink)
-    //                    .symbolRenderingMode(.hierarchical))
-    //
-    //            }
-    //        }
-    //
-    //        return mealTypeImages
-    //
-    //    }
     
+    @State private var isAnimating = false
     var body: some View {
         
         VStack(alignment: .leading, spacing: 7.0){
             Text(label)
-                .font(.title)
+                .font(.title2)
                 .fontWeight(.heavy)
                 .foregroundColor(color)
                 .lineLimit(2)
@@ -353,7 +279,7 @@ struct InfoBox: View {
                 }
             }
             
-            HStack (alignment: .center, spacing: 13.0){
+            HStack (alignment: .center, spacing: 8.0){
                 Label(calories, systemImage: "bolt.circle.fill")
                     .font(.callout)
                     .fontWeight(.semibold)
@@ -367,6 +293,16 @@ struct InfoBox: View {
                     .italic()
                     .symbolRenderingMode(.palette)
                     .foregroundStyle(Color(red: 01, green: 0.35, blue: 0.4), .white, .white)
+                Spacer(minLength: 0)
+                Button {
+                    //flips the card
+                    isFaceUp = false;
+                } label: {
+                    Image(systemName: "arrow.down.right.square.fill")
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(.black, .white)
+                        .font(.title)
+                }
                 
             }
             
@@ -375,32 +311,6 @@ struct InfoBox: View {
     
 }
 
-//class InfoBoxVM {
-//    let recipe: Recipe
-//
-//    init(recipe: Recipe) {
-//        self.recipe = recipe
-//    }
-//
-//    var healthLables:[String]{
-//        guard let healthLabels = recipe.healthLabels else{return [String]()}
-//
-//        var labels = [String]()
-//
-//        for i in  0..<healthLabels.count {
-//            let label = healthLabels[i]
-//            switch(label){
-//            case "Gluten-Free", "Keto-Friendly", "Kosher", "Vegan", "Vegetarian":
-//                labels.append(label)
-//            default:
-//                continue
-//            }
-//        }
-//
-//        return labels
-//    }
-//}
-//
 
 struct HealthSymbols: View{
     var healthLabels: [String]?
@@ -527,308 +437,5 @@ struct MealSymbols: View{
                 }
             }
         }
-    }
-}
-
-
-
-// MARK: - Back of Card
-
-struct CardBack: View {
-    var body: some View {
-        VStack (alignment: .trailing){
-            ZStack(alignment: .leading){
-                Color(red: 1, green: 0.8, blue: 0.2)
-                    .cornerRadius(10)
-                    .shadow(color: Color(red: 0.2, green: 0.28, blue: 0.30, opacity: 0.3), radius: 2, x: 5, y: 5)
-                
-                HStack(spacing: 8) {
-                    NutrionalFacts(servings: 8, servingSize: 200, calories: 250)
-                    try! NFRow2(labels: [
-                        "Tot.Fat",
-                        "Cole",
-                        "Sodiu",
-                        "Tot.Carb",
-                        "Prot"
-                    ], weights: [
-                        "8g",
-                        "0mg",
-                        "160mg",
-                        "37g",
-                        "3g"
-                    ])
-                    try! NFRow3(labels: [
-                        "Protein",
-                        "Vita D",
-                        "Calci.",
-                        "Iron",
-                        "Potass"
-                    ], weights: [
-                        "8g",
-                        "2mcg",
-                        "260mg",
-                        "8mg",
-                        "240mg"
-                    ])
-                    
-                }
-                .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
-            }
-            .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
-            
-        }
-        
-    }
-}
-
-
-struct Nutrition: View {
-    let label: String
-    let amount: String
-    let bold: Bool
-    
-    init(label: String, amount: String, bold: Bool = true ) {
-        self.label = label
-        self.amount = amount
-        self.bold = bold
-    }
-    
-    var body: some View {
-        HStack{
-            Text(label)
-                .font(.footnote)
-                .fontWeight(bold ? .bold : .regular)
-                .lineLimit(1)
-                .minimumScaleFactor(0.3)
-            Text(amount)
-                .font(.footnote)
-                .lineLimit(1)
-                .minimumScaleFactor(0.5)
-            Spacer()
-            Text("10%")
-                .font(.footnote)
-                .lineLimit(1)
-                .minimumScaleFactor(0.5)
-        }
-    }
-}
-
-// MARK: Nutritional Facts
-
-struct NutrionalFacts: View {
-    let servings: Int
-    let servingSize: Int
-    let calories: Int
-    
-    
-    var body: some View {
-        //column One
-        VStack(alignment: .leading, spacing: 0){
-            Text("Nutritional Facts")
-                .fontWeight(.heavy)
-                .font(.headline)
-                .multilineTextAlignment(.leading)
-                .lineLimit(2)
-            Rectangle()
-                .frame(height: 0.5)
-            
-            Text("\(servings) servings")
-                .fontWeight(.light)
-                .font(.caption2)
-            
-            
-            HStack{
-                Text("Serving size")
-                    .font(.footnote)
-                    .fontWeight(.bold)
-                Spacer()
-                Text("\(servingSize)g")
-                    .font(.footnote)
-            }
-            
-            Rectangle()
-                .frame(height: 6)
-            
-            Text("Amount per serving")
-                .font(.caption2)
-            
-            HStack{
-                Text("Calories")
-                    .font(.footnote)
-                    .fontWeight(.bold)
-                Spacer()
-                Text("\(calories)")
-                    .font(.footnote)
-            }
-            
-            Rectangle()
-                .frame(height: 2)
-            
-            HStack{
-                Spacer()
-                Text("% Daily Value*")
-                    .font(.caption2)
-                    .fontWeight(.bold)
-            }
-        }
-    }
-}
-
-struct NutritionFactsDetail: View {
-    let label: String
-    let amount: String
-    let percentage: Int
-    let indentTwice: Bool
-    var indent: String {
-        return indentTwice ? "      " : "   "
-    }
-    
-    init(label: String, amount: String, percentage: Int, indentTwice: Bool = false){
-        self.label = label
-        self.amount = amount
-        self.percentage = percentage
-        self.indentTwice = indentTwice
-    }
-    
-    var body: some View{
-        HStack(spacing: 0){
-            Text("\(indent)\(label)")
-                .font(.footnote)
-                .lineLimit(1)
-                .minimumScaleFactor(0.5)
-            Text("   \(amount)")
-                .font(.footnote)
-                .lineLimit(1)
-                .minimumScaleFactor(0.5)
-            Spacer()
-            Text("\(percentage)%")
-                .font(.footnote)
-                .lineLimit(1)
-                .minimumScaleFactor(0.5)
-        }
-    }
-}
-
-struct NFRow2: View {
-    
-    enum NFRowError: Error {
-        case labelAndWeightsMisMatch
-    }
-    
-    let labels: [String]
-    let weights: [String]
-    
-    init(labels: [String], weights: [String]) throws {
-        guard labels.count == weights.count,
-              labels.count == 5 else { throw NFRowError.labelAndWeightsMisMatch }
-        
-        self.labels = labels
-        self.weights = weights
-    }
-    
-    var body: some View {
-        //column One
-        VStack(alignment: .leading, spacing: 0){
-            Group{
-                Rectangle()
-                    .frame(height: 0.5)
-                
-                Nutrition(label: labels[0], amount: weights[0])
-                Rectangle()
-                    .frame(height: 0.5)
-                
-                NutritionFactsDetail(label: "S.Fat", amount: "1g", percentage: 7)
-                Rectangle()
-                    .frame(height: 0.5)
-                
-                NutritionFactsDetail(label: "T.Fat", amount: "1g", percentage: 0)
-                Rectangle()
-                    .frame(height: 0.5)
-                
-                Nutrition(label: labels[2], amount: weights[2])
-                Rectangle()
-                    .frame(height: 0.5)
-                
-                
-            }
-            
-            Group{
-                Nutrition(label: labels[3], amount: weights[3])
-                Rectangle()
-                    .frame(height: 0.5)
-                
-                NutritionFactsDetail(label: "D.Fibery", amount: "1g", percentage: 14)
-                Rectangle()
-                    .frame(height: 0.5)
-                
-                NutritionFactsDetail(label: "Tot.Sug", amount: "1g", percentage: 14)
-                Rectangle()
-                    .frame(height: 0.5)
-                
-                NutritionFactsDetail(label: "Add.Sug", amount: "1g", percentage: 14 , indentTwice: true)
-            }
-            
-            
-        }
-        
-    }
-}
-
-struct NFRow3: View {
-    
-    enum NFRowError: Error {
-        case labelAndWeightsMisMatch
-    }
-    
-    let labels: [String]
-    let weights: [String]
-    
-    init(labels: [String], weights: [String]) throws {
-        guard labels.count == weights.count,
-              labels.count == 5 else { throw NFRowError.labelAndWeightsMisMatch }
-        
-        self.labels = labels
-        self.weights = weights
-    }
-    
-    var body: some View {
-        //column One
-        VStack(alignment: .leading, spacing: 0){
-            Group{
-                Rectangle()
-                    .frame(height: 0.5)
-                
-                Nutrition(label: labels[0], amount: weights[0])
-                Rectangle()
-                    .frame(height: 6)
-                
-                Nutrition(label: labels[1], amount: weights[1], bold: false)
-                Rectangle()
-                    .frame(height: 0.5)
-                
-                Nutrition(label: labels[2], amount: weights[2], bold: false)
-                Rectangle()
-                    .frame(height: 0.5)
-                
-                Nutrition(label: labels[3], amount: weights[3], bold: false)
-                Rectangle()
-                    .frame(height: 0.5)
-                
-                Nutrition(label: labels[4], amount: weights[4], bold: false)
-            }
-            
-            Group{
-                Rectangle()
-                    .frame(height: 2)
-                Text("*The % Daily Value tells you how much a nutrient in a serving of food contributes to a daily diet. 2000 calories a day is used for general nutrition advice.")
-                    .font(.caption2)
-                    .fontWeight(.light)
-                    .lineLimit(/*@START_MENU_TOKEN@*/5/*@END_MENU_TOKEN@*/)
-                    .minimumScaleFactor(0.6)
-                
-            }
-            
-        }
-        
     }
 }
