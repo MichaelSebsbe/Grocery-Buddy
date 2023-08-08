@@ -189,8 +189,9 @@ struct InfoBox: View {
     }
     var prepTime: String?{
         if let prepTime = recipe.totalTime{
-            let hrs = prepTime / 60
-            let mins = prepTime % 60
+            let hrs = Int(prepTime / 60)
+            //let mins = prepTime % 60
+            let  mins = Int(prepTime.truncatingRemainder(dividingBy: 60.0))
             switch (hrs, mins){
             case (0, 0):
                 return nil
@@ -220,8 +221,6 @@ struct InfoBox: View {
                 .lineLimit(2)
                 .minimumScaleFactor(0.3)
                 .textCase(.uppercase)
-                //.shadow(color: .white, radius: 4, x: 0, y: 0)
-            //.padding(EdgeInsets(top: 0, leading: 0, bottom: 6, trailing: 0))
             
             HStack(alignment: .center, spacing: 14){
                 
@@ -232,28 +231,13 @@ struct InfoBox: View {
                 
                 HealthSymbols(healthLabels: recipe.healthLabels)
                     .font(.title2)
-                //                Image(systemName: "leaf.circle.fill")
-                //                //.foregroundColor(Color(red: 0.02, green: 0.87, blue: 0.62))
-                //
-                //                    .symbolRenderingMode(.palette)
-                //                    .foregroundStyle(.white, Color(red: 0.02, green: 0.87, blue: 0.62))
-                //                Image(systemName: "leaf.circle.fill")
-                //                //.foregroundColor(.yellow)
-                //                    .font(.title2)
-                //                    .symbolRenderingMode(.palette)
-                //                    .foregroundStyle(.white, .yellow)
+            
                 
                 Text(region)
                     .font(.title2)
                     .foregroundColor(Color(red: 0.2, green: 0.0, blue: 0.6))
                     .padding(.trailing, 6)
-                //                Image(systemName: "globe.americas.fill")
-                //                    .font(.title2)
-                //                    .foregroundColor(Color(red: 0.2, green: 0.0, blue: 0.6))
-                //                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 6))
-                
-                // Text("🇺🇸")
-                //     .font(.title)
+       
             }
             .padding(2)
             .background(Color(red: 0.6, green: 0.4, blue: 0.6))

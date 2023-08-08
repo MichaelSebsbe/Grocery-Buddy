@@ -11,6 +11,24 @@ struct RecipiesContentView: View {
     @State var searchTerm = ""
     @State var recipies: RecipeResponse?
     @State var scrollToTop = false
+    @State var featuredKeys = ["Burger", "Sushi", "Cupcake", "Lasagna", "Pizza"]
+    
+    var featuredRecipe : Recipe?{
+        var recipe : Recipe? =  nil
+        let semaphore = DispatchSemaphore(value: 0)
+        
+        let key = featuredKeys.remove(at: Int.random(in: 0..<featuredKeys.count))
+        
+        RequestManager.getRecpies(for: key) { recipies in
+            if let recipies = recipies{
+                recipe = recipies.hits[Int.random(in: 0...5)]?.recipe //grab random Recipe
+            }
+            semaphore.signal()
+        }
+        semaphore.wait()
+        return recipe
+        
+    }
     
     var body: some View {
         NavigationView{
@@ -18,20 +36,33 @@ struct RecipiesContentView: View {
                 SearchBar(searchText: $searchTerm, recipies: $recipies, hasNewResults: $scrollToTop)
                     .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
                 
-                ScrollViewReader { proxy in
-                    ScrollView(.vertical, showsIndicators: true) {
-                        RecipieCardsScrollView(recipes: recipies)
-                        
-                    }.onChange(of: scrollToTop) { _ in
-                        scrollToTop = false
-                        withAnimation {
-                            proxy.scrollTo(0)
-                        
+                if scrollToTop == true {
+                    ScrollViewReader { proxy in
+                        ScrollView(.vertical, showsIndicators: true) {
+                            RecipieCardsScrollView(recipes: recipies)
+                            
+                        }.onChange(of: scrollToTop) { _ in
+                            scrollToTop = false
+                            withAnimation {
+                                proxy.scrollTo(0)
+                                
+                            }
+                            
                         }
+                    }
+                } else {
+                    Label("Today's Featured Recipies", systemImage: "star.fill")
+                        .font(.headline)
+                        .labelStyle(.titleAndIcon)
                         
+                    ScrollView(.vertical, showsIndicators: true) {
+                        FeaturedRecipeCard(recipe: featuredRecipe!)
+                        FeaturedRecipeCard(recipe: featuredRecipe!)
+                        FeaturedRecipeCard(recipe: featuredRecipe!)
+                        FeaturedRecipeCard(recipe: featuredRecipe!)
+                        FeaturedRecipeCard(recipe: featuredRecipe!)
                     }
                 }
-                
             }
         }
     }
