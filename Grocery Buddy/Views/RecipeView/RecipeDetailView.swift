@@ -10,6 +10,7 @@ import WebKit
 
 struct RecipeDetailView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    @Environment(\.managedObjectContext) var managedObjectContext
     @State private var selectedCount: Int = 0
     @State private var allSelected = false
     
@@ -101,7 +102,7 @@ struct RecipeDetailView: View {
                 Text("\(selectedCount) out of \(sanitizedIngredients.count)")
                     .frame(maxWidth: .infinity, alignment: .center)
                     .fontWeight(.semibold)
-                Button("Done"){
+                Button("Add To Cart"){
                     self.presentationMode.wrappedValue.dismiss()
                 }
                 .tint(.yellow)
@@ -136,6 +137,7 @@ struct RecipeDetailView_Previews: PreviewProvider {
 }
 
 struct IngredientView: View {
+    @EnvironmentObject var selectedIngredients: SelectedIngredients
     @State var isSelected: Bool = false
     @Binding var allSelected: Bool
     @Binding var selectCount: Int
@@ -233,16 +235,22 @@ struct IngredientView: View {
         .onTapGesture {
             withAnimation(.easeIn(duration: 0.5)){
                 isSelected.toggle()
+                
+                guard let foodId = ingredient.foodId
+                else {
+                    print("Error: Cannot add ingredient to cart (Missing FoodID)")
+                    return
+                }
+            
                 if(isSelected){
+                    selectedIngredients.ingredients[foodId] = ingredient
                     selectCount += 1
                 }else{
+                    selectedIngredients.ingredients.removeValue(forKey: foodId)
                     selectCount -= 1
                 }
             }
-           
         }
-
-        
     }
 
 }
@@ -299,15 +307,4 @@ struct TopButtons: View {
         }
     }
 }
-//
-//struct TopViewProvider: PreviewProvider{
-//    typealias Previews = TopButtons
-//
-//    static var previews: TopButtons{
-//
-//    }
-//
-//
-//
-//
-//}
+

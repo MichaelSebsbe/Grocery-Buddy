@@ -51,9 +51,14 @@ struct RecipiesContentView: View {
                         }
                     }
                 } else {
-                    Label("Today's Featured Recipies", systemImage: "star.fill")
-                        .font(.headline)
-                        .labelStyle(.titleAndIcon)
+                    Label {
+                        Text("Today's Featured Recipies")
+                    } icon: {
+                        Image(systemName: "star.circle.fill")
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(.white, .yellow)
+                    }
+                    .font(.headline)
                         
                     ScrollView(.vertical, showsIndicators: true) {
                         FeaturedRecipeCard(recipe: featuredRecipe!)

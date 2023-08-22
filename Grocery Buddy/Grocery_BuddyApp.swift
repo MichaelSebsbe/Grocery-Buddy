@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct Grocery_BuddyApp: App {
     let persistenceController = PersistenceController.shared
+    let selectedIngredients = SelectedIngredients()
     
     @Environment(\.scenePhase) var scenePhase // detects change when app moves to environment
     
@@ -28,6 +29,8 @@ struct Grocery_BuddyApp: App {
                     }
                     .environment(\.managedObjectContext, persistenceController.container.viewContext)
             }
+            .environmentObject(selectedIngredients)
+            
         }
         .onChange(of: scenePhase) { newValue in
             persistenceController.save() //saves whenever app goes to background and fo

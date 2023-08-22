@@ -22,15 +22,21 @@ struct PersistenceController{
         //create 10 example values
         for _ in 0..<10{
             let cartItem = CartItem(context: controller.container.viewContext)
+            cartItem.category = "Seasoning"
             cartItem.id = "food_ssdfsdfsd_sdsfs"
+            cartItem.imageURL = "someting"
+            cartItem.measure = "grams"
             cartItem.name = "rice"
+            cartItem.quantity = 2.5
+            cartItem.weight = 500
+        
         }
         
         return controller
     }()
     
     
-    init(inMemory: Bool = false){
+    init(inMemory: Bool = false){ // store in disk not mem
         
         //setup container
         container = NSPersistentContainer(name: "Model")

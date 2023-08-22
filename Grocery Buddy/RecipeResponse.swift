@@ -81,7 +81,7 @@ struct NutrientsInfo: Codable{
     let unit: String?
 }
 
-struct Ingredient: Codable {
+struct Ingredient: Codable, Hashable{
     let text: String?
     let quantity: Float?
     let measure: String?

@@ -8,40 +8,41 @@
 import SwiftUI
 
 struct GroceryListView: View {
-    @State private var items: [Grocery] = []
+    @EnvironmentObject var ingredientsManagedObject: SelectedIngredients
+    //@State private var items: [Grocery] = []
     @State private var showAddItemView: Bool = false
     @State private var newItemText: String = ""
     @State private var newItemDescription: String = ""
     @State private var isFound: Bool = false
     
+    
     var body: some View {
         //to show logged in users
-        
-        
         VStack{
             Buddies()
             
             NavigationView {
                 
                 List {
-                    ForEach(items, id: \.self) { item in
+                    ForEach(Array(ingredientsManagedObject.ingredients.values), id: \.self.foodId) { ingredient in
                         HStack{
-                            Text(item.name)
-                            Text(item.description)
+                            Text(ingredient.food!)
+                            Text(ingredient.foodCategory!)
                                 .fontWeight(.ultraLight)
-                            
+
                             Spacer()
-                            Toggle("", isOn: Binding(get: {
-                                item.isFound
-                            }, set: { newValue in
-                                item.isFound = newValue
-                            }))
-                            .tint(.orange)
+//                            Toggle("", isOn: Binding(get: {
+//                                ingredient.isFound
+//                            }, set: { newValue in
+//                                ingredient.isFound = newValue
+//                            }))
+//                            .tint(.orange)
                             
                         }
                     }
                     .onDelete { indexSet in
-                        items.remove(atOffsets: indexSet)
+                        //items.remove(atOffsets: indexSet)
+                        //delete by key from context here
                     }
                 }
                 .navigationBarItems(trailing: Button(action: {
@@ -54,11 +55,11 @@ struct GroceryListView: View {
                         TextField("Milk 🐮", text: $newItemText)
                         TextField("2%", text: $newItemDescription)
                         Button {
-                            let grocery = Grocery(name: self.newItemText, description: self.newItemDescription)
-                            self.items.append(grocery)
-                            self.newItemText = ""
-                            self.newItemDescription = ""
-                            self.showAddItemView = false
+//                            let grocery = Grocery(name: self.newItemText, description: self.newItemDescription)
+//                            self.items.append(grocery)
+//                            self.newItemText = ""
+//                            self.newItemDescription = ""
+//                            self.showAddItemView = false
                         } label: {
                             Text("Add")
                         }
