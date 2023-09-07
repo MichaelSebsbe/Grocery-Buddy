@@ -23,11 +23,15 @@ struct Grocery_BuddyApp: App {
                     }
                     .environment(\.managedObjectContext, persistenceController.container.viewContext)
                     
-                GroceryListView()
+                //GroceryListView()
+                GroceryItemsView()
                     .tabItem {
-                        Label("Cart", systemImage: "cart.fill")
+                        Label("Shopping List", systemImage: "list.bullet.clipboard.fill")
                     }
                     .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                
+                
+                
             }
             .environmentObject(selectedIngredients)
             

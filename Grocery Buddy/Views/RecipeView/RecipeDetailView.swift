@@ -11,8 +11,7 @@ import WebKit
 struct RecipeDetailView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @Environment(\.managedObjectContext) var managedObjectContext
-    @State private var selectedCount: Int = 0
-    @State private var allSelected = false
+    @EnvironmentObject var selectedIngredientsEnvObj: SelectedIngredients
     
     let title: String
     let imageURL: String
@@ -32,9 +31,11 @@ struct RecipeDetailView: View {
         
         return sanitaizedIngredients
     }
-    let recipeURL: String
     
-    //let ingredients: [String]
+    @State var selectedIngredients = [String: Ingredient]()
+    
+    let recipeURL: String
+
     var body: some View {
         VStack{
             TopButtons(presentationMode: presentationMode, url: recipeURL)
@@ -78,7 +79,7 @@ struct RecipeDetailView: View {
                     
                     ScrollView(.vertical, showsIndicators: false){
                         ForEach(sanitizedIngredients, id: \.self.foodId){ ingredient in
-                            IngredientView(allSelected: $allSelected, selectCount: $selectedCount, ingredient: ingredient)
+                            IngredientView(selectedIngredients: $selectedIngredients, ingredient: ingredient)
                         }.padding(EdgeInsets(top: 10, leading: 3, bottom: 10, trailing: 0))
                         
                     }.padding(.top, -23).padding(.bottom,-16) //for flush scroll view
@@ -90,19 +91,26 @@ struct RecipeDetailView: View {
             }.padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
             
             HStack{
-                Button("Add All") {
+                Button("Select All") {
                     //add all ingridents to grocery cart
                     withAnimation(.easeIn(duration: 0.5)){
-                        allSelected = true
-                        selectedCount = sanitizedIngredients.count
+                        for ingredient in sanitizedIngredients {
+                            if let foodId = ingredient.foodId{
+                                selectedIngredients[foodId] = ingredient
+                            }
+                        }
                     }
                     
                 }
                 
-                Text("\(selectedCount) out of \(sanitizedIngredients.count)")
+                Text("\(selectedIngredients.count) out of \(sanitizedIngredients.count)")
                     .frame(maxWidth: .infinity, alignment: .center)
                     .fontWeight(.semibold)
-                Button("Add To Cart"){
+                Button("Save"){
+                    //selectedIngredientsEnvObj.ingredients.merging(selectedIngredients, uniquingKeysWith: + )
+                    for ingredients in selectedIngredients.values{
+                        selectedIngredientsEnvObj.append(ingredients)
+                    }
                     self.presentationMode.wrappedValue.dismiss()
                 }
                 .tint(.yellow)
@@ -137,10 +145,7 @@ struct RecipeDetailView_Previews: PreviewProvider {
 }
 
 struct IngredientView: View {
-    @EnvironmentObject var selectedIngredients: SelectedIngredients
-    @State var isSelected: Bool = false
-    @Binding var allSelected: Bool
-    @Binding var selectCount: Int
+    @Binding var selectedIngredients: [String: Ingredient]
     
     var ingredient: Ingredient
     var imageURL: String {
@@ -179,7 +184,17 @@ struct IngredientView: View {
         return "N/A"
     }
     
+    var foodId: String {
+        (ingredient.foodId != nil) ? ingredient.foodId! : ""
+    }
+    
+    var isSelected: Bool {
+        selectedIngredients[foodId] != nil
+    }
+    
     var body: some View {
+        
+        
         HStack{
             // if (isSelected){
             AsyncImage(url: URL(string: imageURL)) { image in
@@ -191,7 +206,7 @@ struct IngredientView: View {
             .clipShape(Circle())
             .overlay(
                 Circle().if{
-                    if(isSelected || allSelected){
+                    if(isSelected){
                         $0.stroke(Color.mint,lineWidth:5)
                     } else {
                         $0.stroke(Color.white, lineWidth: 5)
@@ -207,7 +222,7 @@ struct IngredientView: View {
                 .multilineTextAlignment(.leading)
                 .lineLimit(3)
                 .minimumScaleFactor(0.4)
-                .if(isSelected || allSelected){
+                .if(isSelected){
                     $0.foregroundColor(.mint)
                 }
             
@@ -219,12 +234,12 @@ struct IngredientView: View {
                     .multilineTextAlignment(.leading)
                     .fontWeight(.bold)
                     .textCase(.uppercase)
-                    .if(isSelected || allSelected){
+                    .if(isSelected){
                         $0.foregroundColor(.mint)
                     }
             }
         }.if{
-            if(isSelected || allSelected){
+            if(isSelected){
                 $0.background(LinearGradient(gradient: Gradient(colors: [.yellow, .white]), startPoint: .trailing, endPoint: .leading).cornerRadius(50))
                     
             } else {
@@ -234,20 +249,10 @@ struct IngredientView: View {
         .contentShape(Rectangle())
         .onTapGesture {
             withAnimation(.easeIn(duration: 0.5)){
-                isSelected.toggle()
-                
-                guard let foodId = ingredient.foodId
-                else {
-                    print("Error: Cannot add ingredient to cart (Missing FoodID)")
-                    return
-                }
-            
                 if(isSelected){
-                    selectedIngredients.ingredients[foodId] = ingredient
-                    selectCount += 1
+                    selectedIngredients.removeValue(forKey: foodId)
                 }else{
-                    selectedIngredients.ingredients.removeValue(forKey: foodId)
-                    selectCount -= 1
+                    selectedIngredients[foodId] = ingredient
                 }
             }
         }
