@@ -6,16 +6,21 @@
 //
 
 import SwiftUI
-import WebKit
+import SafariServices
 
-struct RecipeWebView: UIViewRepresentable{
+struct RecipeWebView: UIViewControllerRepresentable {
+    typealias UIViewControllerType = SFSafariViewController
+    
     var url: URL
     
-    func makeUIView(context: Context) -> WKWebView {
-        return WKWebView()
+    func makeUIViewController(context: Context) -> SFSafariViewController {
+        let vc = SFSafariViewController(url: url)
+        vc.preferredControlTintColor = UIColor(.green)
+        
+        return vc
     }
-    func updateUIView(_ webView: WKWebView, context: Context) {
-        let request = URLRequest(url: url)
-        webView.load(request)
+    
+    func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {
+        
     }
 }

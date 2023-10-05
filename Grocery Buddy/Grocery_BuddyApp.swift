@@ -11,6 +11,7 @@ import SwiftUI
 struct Grocery_BuddyApp: App {
     let persistenceController = PersistenceController.shared
     let selectedIngredients = SelectedIngredients()
+    let favoriteRecipes = FavoriteRecipes()
     
     @Environment(\.scenePhase) var scenePhase // detects change when app moves to environment
     
@@ -30,11 +31,14 @@ struct Grocery_BuddyApp: App {
                     }
                     .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 
-                
+                YourRecipesView()
+                    .tabItem {
+                        Label("Your Recipes", systemImage: "heart.circle.fill")
+                    }
                 
             }
             .environmentObject(selectedIngredients)
-            
+            .environmentObject(favoriteRecipes)
         }
         .onChange(of: scenePhase) { newValue in
             persistenceController.save() //saves whenever app goes to background and fo

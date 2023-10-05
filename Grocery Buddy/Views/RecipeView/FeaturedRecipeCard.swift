@@ -38,53 +38,51 @@ struct FeaturedRecipeCard: View {
     
     
     var body: some View {
-           if let imageURL = recipe.images["REGULAR"]!.url,
-           let foodName = recipe.label,
-           let recipeURL = recipe.url {
-               let ingredients = recipe.ingredients
-               NavigationLink(destination: RecipeDetailView(title: foodName, imageURL: imageURL, ingredients: ingredients, recipeURL: recipeURL).navigationBarBackButtonHidden()){
-                   VStack (alignment: .trailing){
-                       ZStack(alignment: .leading){
-                           Color(red: 1, green: 0.8, blue: 0.2)
-                               .cornerRadius(10)
-                               .shadow(color: Color(red: 0.2, green: 0.28, blue: 0.30, opacity: 0.3), radius: 2, x: 5, y: 5)
-                           
-                           VStack {
-                               HStack(alignment: .center){
-                                   AsyncImage(url: URL(string: url)) { image in
-                                       image.resizable()
-                                   } placeholder: {
-                                       
-                                       ProgressView()
-                                   }
-                                   .frame(width: 126.0, height: 126.0)
-                                   .cornerRadius(10)
-                                   .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
-                                   
-                                   FeaturedInfoBox(recipe: recipe)
-                                       .padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 10))
-                               }
-                               
-                               if let totalWeight = recipe.totalWeight,
-                                  let totalNutrients = recipe.totalNutrients,
-                                  let totalDaily = recipe.totalDaily{
-                                   FeaturedCardBack(totalWeight: totalWeight, totalNutrients: totalNutrients, totalDaily: totalDaily)
-                               }
-                               
-                           }
-                       }
-                       .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
-                       Text(source)
-                           .multilineTextAlignment(.trailing)
-                           .italic()
-                           .font(.body)
-                           .fontWeight(.light)
-                           .padding(EdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 15))
-                       
-                   }
-                   
-               }.buttonStyle(PlainButtonStyle())
-           }
+        let ingredients = recipe.ingredients
+        NavigationLink(destination: RecipeDetailView(recipe: recipe)
+            .navigationBarBackButtonHidden()){
+                VStack (alignment: .trailing){
+                    ZStack(alignment: .leading){
+                        Color(red: 1, green: 0.8, blue: 0.2)
+                            .cornerRadius(10)
+                            .shadow(color: Color(red: 0.2, green: 0.28, blue: 0.30, opacity: 0.3), radius: 2, x: 5, y: 5)
+                        
+                        VStack {
+                            HStack(alignment: .center){
+                                AsyncImage(url: URL(string: url)) { image in
+                                    image.resizable()
+                                } placeholder: {
+                                    
+                                    ProgressView()
+                                }
+                                .frame(width: 126.0, height: 126.0)
+                                .cornerRadius(10)
+                                .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
+                                
+                                FeaturedInfoBox(recipe: recipe)
+                                    .padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 10))
+                            }
+                            
+                            if let totalWeight = recipe.totalWeight,
+                               let totalNutrients = recipe.totalNutrients,
+                               let totalDaily = recipe.totalDaily{
+                                FeaturedCardBack(totalWeight: totalWeight, totalNutrients: totalNutrients, totalDaily: totalDaily)
+                            }
+                            
+                        }
+                    }
+                    .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
+                    Text(source)
+                        .multilineTextAlignment(.trailing)
+                        .italic()
+                        .font(.body)
+                        .fontWeight(.light)
+                        .padding(EdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 15))
+                    
+                }
+                
+            }.buttonStyle(PlainButtonStyle())
+        
     }
 }
 
@@ -185,16 +183,16 @@ struct FeaturedInfoBox: View {
             switch (hrs, mins){
             case (0, 0):
                 return nil
-           
+                
             case (0, _):
                 return "\(mins)Mins"
-              
+                
             case (_, 0):
                 return "\(hrs)Hrs"
-            
+                
             case (_, _):
                 return "\(hrs)Hrs \(mins)Mins"
-            
+                
             }
         }
         return nil
@@ -221,13 +219,13 @@ struct FeaturedInfoBox: View {
                 
                 HealthSymbols(healthLabels: recipe.healthLabels)
                     .font(.title2)
-            
+                
                 
                 Text(region)
                     .font(.title2)
                     .foregroundColor(Color(red: 0.2, green: 0.0, blue: 0.6))
                     .padding(.trailing, 6)
-       
+                
             }
             .padding(2)
             .background(Color(red: 0.6, green: 0.4, blue: 0.6))
@@ -246,10 +244,10 @@ struct FeaturedInfoBox: View {
                 if let prepTime = prepTime{
                     Label(prepTime, systemImage: "hourglass")
                         .font(.body)
-                        //.fontWeight(.light)
+                    //.fontWeight(.light)
                         .symbolRenderingMode(.palette)
                         .foregroundStyle(.white, Color(red: 0.02, green: 0.87, blue: 0.62))
-                        //.shadow(color: Color(red: 1, green: 1, blue: 1), radius: 1.2, x: 0, y: 0)
+                    //.shadow(color: Color(red: 1, green: 1, blue: 1), radius: 1.2, x: 0, y: 0)
                 }
             }
             
@@ -268,7 +266,7 @@ struct FeaturedInfoBox: View {
                     .symbolRenderingMode(.palette)
                     .foregroundStyle(Color(red: 01, green: 0.35, blue: 0.4), .white, .white)
                 Spacer(minLength: 0)
-            
+                
             }
             
         }

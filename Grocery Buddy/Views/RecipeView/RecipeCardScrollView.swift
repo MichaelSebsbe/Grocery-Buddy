@@ -15,14 +15,8 @@ struct RecipieCardsScrollView: View {
                 
                 let recipesCount = recipes.hits.count
                 ForEach(0..<recipesCount, id: \.self) { index in
-                    if let recipe = recipes.hits[index]?.recipe,
-                       let imageURL = recipe.images["REGULAR"]!.url,
-                       let foodName = recipe.label,
-                       let recipeURL = recipe.url {
-                        
-                        let ingredients = recipe.ingredients
-                        
-                        NavigationLink(destination: RecipeDetailView(title: foodName, imageURL: imageURL, ingredients: ingredients, recipeURL: recipeURL).navigationBarBackButtonHidden()){
+                    if let recipe = recipes.hits[index]?.recipe {
+                        NavigationLink(destination: RecipeDetailView(recipe: recipe).navigationBarBackButtonHidden()){
                             RecipeCardFront(recipe: recipe)
                             
                         }.buttonStyle(PlainButtonStyle())

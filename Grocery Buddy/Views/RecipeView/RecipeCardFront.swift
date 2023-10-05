@@ -296,10 +296,10 @@ struct InfoBox: View {
 }
 
 
-struct HealthSymbols: View{
+struct HealthSymbols: View {
     var healthLabels: [String]?
     var sanitizedHealthLabels: [String]?{
-        let neededLabels = ["Keto-Friendly", "Gluten-Free", "Kosher", "Vegan", "Vegetarian", "Pescatarian"]
+        let neededLabels = ["Keto-Friendly", "Gluten-Free", "Kosher", "Vegan", "Vegetarian", "Pescatarian", "Dairy-Free"]
         
         if var sanitizedHealtLabels = healthLabels{
             sanitizedHealtLabels = sanitizedHealtLabels.filter({ label in
@@ -348,9 +348,6 @@ struct HealthSymbols: View{
                         default:
                             
                             EmptyView()
-                            //                        Image(systemName: "q.square.fill")
-                            //                            .symbolRenderingMode(.multicolor)
-                            //                            .foregroundColor(.cyan)
                         }
                         
                     }

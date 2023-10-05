@@ -31,7 +31,7 @@ struct Link: Codable {
 }
 
 struct Recipe: Codable{
-    
+
     let uri: String?
     let label: String? //title of recipe
     let image: String?

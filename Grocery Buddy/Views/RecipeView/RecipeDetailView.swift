@@ -6,16 +6,31 @@
 //
 
 import SwiftUI
-import WebKit
 
 struct RecipeDetailView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @Environment(\.managedObjectContext) var managedObjectContext
     @EnvironmentObject var selectedIngredientsEnvObj: SelectedIngredients
+    @EnvironmentObject var favRecipes : FavoriteRecipes
     
-    let title: String
-    let imageURL: String
-    let ingredients: [Ingredient]
+    let recipe: Recipe
+    
+    var title: String {
+        if let foodName = recipe.label{
+            return foodName
+        }
+        return "Missing Name"
+    }
+    var  imageURL: String {
+        if let imageURL = recipe.images["REGULAR"]!.url{
+            return imageURL
+        }
+        return "DefualtImageURL"
+    }
+    
+    var ingredients: [Ingredient]{
+        recipe.ingredients
+    }
     var sanitizedIngredients: [Ingredient]{
         var ingredientIDs = [String]()
         var sanitaizedIngredients = [Ingredient]()
@@ -34,7 +49,12 @@ struct RecipeDetailView: View {
     
     @State var selectedIngredients = [String: Ingredient]()
     
-    let recipeURL: String
+    var recipeURL: String {
+        if let url = recipe.url {
+            return url
+        }
+        return "Missing URL"
+    }
 
     var body: some View {
         VStack{
@@ -108,9 +128,7 @@ struct RecipeDetailView: View {
                     .fontWeight(.semibold)
                 Button("Save"){
                     //selectedIngredientsEnvObj.ingredients.merging(selectedIngredients, uniquingKeysWith: + )
-                    for ingredients in selectedIngredients.values{
-                        selectedIngredientsEnvObj.append(ingredients)
-                    }
+                    save()
                     self.presentationMode.wrappedValue.dismiss()
                 }
                 .tint(.yellow)
@@ -122,27 +140,18 @@ struct RecipeDetailView: View {
             
         }
     }
-}
-
-
-struct RecipeDetailView_Previews: PreviewProvider {
-
-    static var previews: some View {
-        RecipeDetailView(title:"I just wanted to count the digits of th", imageURL:"https://3.bp.blogspot.com/-MPmB8FO8yjA/WUviA9tctaI/AAAAAAAALK8/LFjrerEl4yMiRvsnj-Wd0gggNYxA2dGOACLcBGAs/s1600/22Salu%2BBinagoongang-Lechon-Karekare.JPG", ingredients: [
-            Ingredient(text: "Mayonnaise", quantity: 2.5, measure: "Cuperroni", food: "Mayonnaise with shshsd", weight: 3, foodCategory: "dsf", foodId: "22", image: "https://i2-prod.dailystar.co.uk/incoming/article23201324.ece/ALTERNATES/s615b/0_Bowl-of-mayonnaise-with-spoon-embedded-view-from-above.jpg"),
-            Ingredient(text: "Mayonnaise", quantity: 2.5, measure: "Cups", food: "Mayonnaise", weight: 3, foodCategory: "dsf", foodId: "23", image: "https://i2-prod.dailystar.co.uk/incoming/article23201324.ece/ALTERNATES/s615b/0_Bowl-of-mayonnaise-with-spoon-embedded-view-from-above.jpg"),
-            Ingredient(text: "Mayonnaise", quantity: 2.5, measure: "Cups", food: "Mayonnaise", weight: 3, foodCategory: "dsf", foodId: "24", image: "https://i2-prod.dailystar.co.uk/incoming/article23201324.ece/ALTERNATES/s615b/0_Bowl-of-mayonnaise-with-spoon-embedded-view-from-above.jpg"),
-            Ingredient(text: "Mayonnaise", quantity: 2.5, measure: "Cuperroni", food: "Mayo", weight: 3, foodCategory: "dsf", foodId: "25", image: "https://i2-prod.dailystar.co.uk/incoming/article23201324.ece/ALTERNATES/s615b/0_Bowl-of-mayonnaise-with-spoon-embedded-view-from-above.jpg"),
-            Ingredient(text: "Mayonnaise", quantity: 2.5, measure: "Cups", food: "Mayonnaise", weight: 3, foodCategory: "dsf", foodId: "26", image: "https://i2-prod.dailystar.co.uk/incoming/article23201324.ece/ALTERNATES/s615b/0_Bowl-of-mayonnaise-with-spoon-embedded-view-from-above.jpg"),
-            Ingredient(text: "Mayonnaise", quantity: 2.5, measure: "Cups", food: "Mayonnaise", weight: 3, foodCategory: "dsf", foodId: "27", image: "https://i2-prod.dailystar.co.uk/incoming/article23201324.ece/ALTERNATES/s615b/0_Bowl-of-mayonnaise-with-spoon-embedded-view-from-above.jpg")
-            
-        ],
-                         recipeURL: "https://google.com"
-        ).previewDevice("iPhone 14")
+    
+    private func save(){
+        guard !selectedIngredients.isEmpty else { return; }
         
+        for ingredients in selectedIngredients.values{
+            selectedIngredientsEnvObj.append(ingredients)
+        }
+        favRecipes.recipes.append(recipe)
     }
     
 }
+
 
 struct IngredientView: View {
     @Binding var selectedIngredients: [String: Ingredient]
@@ -306,10 +315,55 @@ struct TopButtons: View {
             }
             .sheet(isPresented: $showWebView) {
                 if let url = URL(string: url){
+                    SimpleTimer()
+                        .frame(height: 60)
+                        .padding(4)
                     RecipeWebView(url: url)
+                        //.preferredColorScheme(.dark)
                 }
             }
         }
     }
 }
 
+struct SimpleTimer: View{
+    var body: some View{
+        VStack{
+            Text("Start the timer when ready to Cook!")
+                .font(.caption2)
+            HStack{
+                Spacer()
+                Button {
+                    startTimer()
+                } label: {
+                    ZStack{
+                        Circle()
+                            .frame(width: 50)
+                            .foregroundColor(.green)
+                        Image(systemName: "play.fill")
+                            .foregroundColor(.white)
+                    }
+                    
+                }
+
+                ZStack{
+                    Rectangle()
+                        .frame(width: .infinity)
+                        .foregroundColor(AppColors.mainColor)
+                        .cornerRadius(70)
+                    
+                    Text(" 02:  30:  00 ")
+                        .font(.title)
+                    // .alignmentGuide(.center){_ in
+                    //CGFloat(3)
+                    //}
+                }
+                Spacer()
+            }
+        }
+    }
+    
+    private func startTimer(){
+        
+    }
+}
