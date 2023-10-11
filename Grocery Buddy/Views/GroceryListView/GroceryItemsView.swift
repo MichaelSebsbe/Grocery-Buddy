@@ -11,24 +11,28 @@ struct GroceryItemsView: View {
     @EnvironmentObject var ingredientsManagedObject: SelectedIngredients
     
     var body: some View {
-        ScrollView{
-            ForEach(Array(ingredientsManagedObject.ingredients.keys.sorted()), id: \.self){ category in
-                GroceryCategoryView(category: category)
-                
-                let ingredients = ingredientsManagedObject.ingredients[category]!
-                let sortedIngredients = ingredients.values.sorted{$0.food! < $1.food!}
-                
-                ForEach(sortedIngredients, id:  \.self.foodId) { ingredient in
-                    GroceryView(ingredient: ingredient)
+        VStack{
+            ScreenTitle(title: "Your Shopping List", imageSystemName: "cart.circle.fill", screenColor: .green)
+            ScrollView{
+                ForEach(Array(ingredientsManagedObject.ingredients.keys.sorted()), id: \.self){ category in
+                    HStack{
+                        Spacer()
+                        GroceryCategoryView(category: category)
+                    }
+                    .padding(.horizontal)
+                    
+                    let ingredients = ingredientsManagedObject.ingredients[category]!
+                    let sortedIngredients = ingredients.values.sorted{$0.food! < $1.food!}
+                    
+                    ForEach(sortedIngredients, id:  \.self.foodId) { ingredient in
+                        GroceryView(ingredient: ingredient)
+                            .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                                //add all to cart
+                            }
+                    }
                 }
             }
         }
-    }
-}
-
-struct GroceryItems_Previews: PreviewProvider {
-    static var previews: some View {
-        GroceryItemsView()
     }
 }
 
@@ -37,17 +41,59 @@ struct GroceryCategoryView: View{
     var body: some View{
         HStack{
             Text(category)
-                .font(.footnote)
-            Spacer()
+                .font(.caption2)
+                .bold()
+                .foregroundColor(.white)
+                .padding(EdgeInsets(top: 4, leading: 7, bottom: 4, trailing: 7))
+                .background(AppColors.purple)
+                .cornerRadius(200)
         }
-        .padding(.leading)
+    }
+}
+
+struct GroceryCategoryViewPreview: PreviewProvider {
+    
+    typealias Previews = GroceryCategoryView
+    
+    static var previews: GroceryCategoryView {
+        GroceryCategoryView(category:"Condiments")
     }
 }
 
 
 struct GroceryView: View {
     @State var isFound = false
+    
     let ingredient: Ingredient
+    
+    var body: some View{
+        HStack{
+            if isFound{
+                Image(systemName: "checkmark.circle.fill")
+                    .resizable()
+                    .foregroundColor(.green)
+                    .frame(width: 30, height: 30)
+            }
+            
+            ChecklistView(isFound: $isFound, ingredient: ingredient)
+                .onTapGesture {
+                    withAnimation(.easeIn(duration: 0.5)){
+                        isFound.toggle()
+                    }
+                }
+                .if(isFound){
+                    $0.opacity(0.8)
+                }
+        }
+        .padding(EdgeInsets(top: 0, leading: 5, bottom: 0, trailing: 5))
+    }
+}
+
+
+struct ChecklistView: View {
+    @Binding var isFound: Bool
+    let ingredient: Ingredient
+    
     var imageURL: String {
         ingredient.image ?? "Default Image url"
     }
@@ -90,9 +136,15 @@ struct GroceryView: View {
     var body: some View{
         ZStack {
             Rectangle()
-                .foregroundColor(.yellow)
                 .frame(height: 75)
                 .cornerRadius(10)
+                .shadow(color: Color(red: 0.2, green: 0.28, blue: 0.30, opacity: 0.3), radius: 2, x: 1, y: 1)
+                .if(isFound){
+                    $0.foregroundColor(.green)
+                }
+                .if(!isFound){
+                    $0.foregroundColor(.yellow)
+                }
             
             HStack{
                 AsyncImage(url: URL(string: imageURL)) { image in
@@ -120,20 +172,11 @@ struct GroceryView: View {
             }
             .padding(10)
             
-            if(isFound){ //draw a line across
-                Rectangle()
-                    .frame(height: 1)
-                    .padding(EdgeInsets(top: 0, leading: 80, bottom: 0, trailing: 10))
-            }
-        }
-        .padding(EdgeInsets(top: 0, leading: 5, bottom: 0, trailing: 5))
-        .if(isFound){
-            $0.opacity(0.2)
-        }
-        .onTapGesture {
-            withAnimation(.easeIn(duration: 0.5)){
-                isFound.toggle()
-            }
+//            if(isFound){ //draw a line across
+//                Rectangle()
+//                    .frame(height: 1)
+//                    .padding(EdgeInsets(top: 0, leading: 80, bottom: 0, trailing: 10))
+//            }
         }
     }
 }

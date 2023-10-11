@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct AppColors{
-    static let mainColor =  Color(red: 1, green: 0.8, blue: 0.2)
-    static let buttonsColor =  Color(red: 0.02, green: 0.87, blue: 0.62)
+    static let yellow =  Color(red: 1, green: 0.8, blue: 0.2)
+    static let mint =  Color(red: 0.02, green: 0.87, blue: 0.62)
+    static let purple = Color(red: 0.6, green: 0.4, blue: 0.6)
+    static let red = Color(red: 1, green: 0.3, blue: 0.3)
 }
+

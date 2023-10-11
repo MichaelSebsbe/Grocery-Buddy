@@ -51,21 +51,13 @@ struct RecipiesContentView: View {
                         }
                     }
                 } else {
-                    Label {
-                        Text("Today's Featured Recipies")
-                    } icon: {
-                        Image(systemName: "star.circle.fill")
-                            .symbolRenderingMode(.palette)
-                            .foregroundStyle(.white, .yellow)
-                    }
-                    .font(.headline)
-                        
+                    ScreenTitle(title: "Today's Featured Recipes", imageSystemName: "star.circle.fill", screenColor: .yellow)
                     ScrollView(.vertical, showsIndicators: true) {
-                        FeaturedRecipeCard(recipe: featuredRecipe!)
-                        FeaturedRecipeCard(recipe: featuredRecipe!)
-                        FeaturedRecipeCard(recipe: featuredRecipe!)
-                        FeaturedRecipeCard(recipe: featuredRecipe!)
-                        FeaturedRecipeCard(recipe: featuredRecipe!)
+                        FeaturedRecipeCard(recipe: featuredRecipe!, screenTheme: .yellow)
+                        //FeaturedRecipeCard(recipe: featuredRecipe!)
+                        //FeaturedRecipeCard(recipe: featuredRecipe!)
+                        //FeaturedRecipeCard(recipe: featuredRecipe!)
+                        //FeaturedRecipeCard(recipe: featuredRecipe!)
                     }
                 }
             }

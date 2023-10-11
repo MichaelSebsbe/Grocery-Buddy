@@ -205,7 +205,6 @@ struct IngredientView: View {
         
         
         HStack{
-            // if (isSelected){
             AsyncImage(url: URL(string: imageURL)) { image in
                 image.resizable()
             } placeholder: {
@@ -285,6 +284,7 @@ extension View{
 
 
 
+
 struct TopButtons: View {
     @Binding var presentationMode: PresentationMode
     @State private var showWebView = false
@@ -315,13 +315,24 @@ struct TopButtons: View {
             }
             .sheet(isPresented: $showWebView) {
                 if let url = URL(string: url){
-                    SimpleTimer()
-                        .frame(height: 60)
-                        .padding(4)
-                    RecipeWebView(url: url)
+//                    SimpleTimer()
+//                        .frame(height: 60)
+//                        .padding(4)
+                    ZStack{
+                        RecipeWebView(url: url)
+                        Image(systemName: "hand.tap.fill")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .foregroundColor(AppColors.purple)
+                            .position(x: 164, y: 60)
+                            .frame(width: 40)
+                          
+                            
+                    }
                         //.preferredColorScheme(.dark)
                 }
             }
+            .foregroundColor(.yellow)
         }
     }
 }
@@ -349,7 +360,7 @@ struct SimpleTimer: View{
                 ZStack{
                     Rectangle()
                         .frame(width: .infinity)
-                        .foregroundColor(AppColors.mainColor)
+                        .foregroundColor(AppColors.yellow)
                         .cornerRadius(70)
                     
                     Text(" 02:  30:  00 ")
@@ -367,3 +378,4 @@ struct SimpleTimer: View{
         
     }
 }
+

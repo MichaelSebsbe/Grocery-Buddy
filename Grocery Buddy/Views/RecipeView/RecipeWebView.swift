@@ -15,7 +15,7 @@ struct RecipeWebView: UIViewControllerRepresentable {
     
     func makeUIViewController(context: Context) -> SFSafariViewController {
         let vc = SFSafariViewController(url: url)
-        vc.preferredControlTintColor = UIColor(.green)
+        vc.preferredControlTintColor = UIColor(AppColors.mint)
         
         return vc
     }

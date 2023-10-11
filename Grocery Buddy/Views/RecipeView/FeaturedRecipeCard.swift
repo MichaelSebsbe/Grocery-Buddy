@@ -9,6 +9,19 @@ import SwiftUI
 
 struct FeaturedRecipeCard: View {
     let recipe: Recipe
+    let color: Color
+    
+    init(recipe: Recipe, screenTheme: ScreenTheme){
+        self.recipe = recipe
+        switch screenTheme{
+        case .green:
+            self.color = AppColors.mint
+        case .yellow:
+            self.color = AppColors.yellow
+        case .red:
+            self.color = AppColors.red
+        }
+    }
     
     var url: String{
         if let largeImage = recipe.images["LARGE"],
@@ -38,12 +51,11 @@ struct FeaturedRecipeCard: View {
     
     
     var body: some View {
-        let ingredients = recipe.ingredients
         NavigationLink(destination: RecipeDetailView(recipe: recipe)
             .navigationBarBackButtonHidden()){
                 VStack (alignment: .trailing){
                     ZStack(alignment: .leading){
-                        Color(red: 1, green: 0.8, blue: 0.2)
+                        color
                             .cornerRadius(10)
                             .shadow(color: Color(red: 0.2, green: 0.28, blue: 0.30, opacity: 0.3), radius: 2, x: 5, y: 5)
                         
@@ -228,7 +240,7 @@ struct FeaturedInfoBox: View {
                 
             }
             .padding(2)
-            .background(Color(red: 0.6, green: 0.4, blue: 0.6))
+            .background(AppColors.purple)
             .cornerRadius(23)
             
             
