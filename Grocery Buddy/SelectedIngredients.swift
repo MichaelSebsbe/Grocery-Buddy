@@ -47,4 +47,23 @@ class SelectedIngredients: ObservableObject{
         
     }
     //add core data logic here to store to database
+    
+    public func remove(_ ingredient: Ingredient){
+        guard let foodId = ingredient.foodId,
+              let category = ingredient.foodCategory?.capitalized
+        else {
+            print("Error unwrapping ingredeints")
+            return
+        }
+        
+        if var categoryOf = ingredients[category]{ //category exists
+            categoryOf.removeValue(forKey: foodId)
+            
+            if categoryOf.count == 0 {
+                ingredients.removeValue(forKey: category)
+            }else{
+                ingredients[category] = categoryOf
+            }
+        }
+    }
 }

@@ -26,10 +26,15 @@
 		ADF53FBC29CF5A3A00995F7C /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF53FBB29CF5A3A00995F7C /* PersistenceController.swift */; };
 		ADFCBD7429B818D700AAD9D6 /* RecipeCardFront.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFCBD7329B818D700AAD9D6 /* RecipeCardFront.swift */; };
 		ADFCBD7629B8197300AAD9D6 /* RecipeCardBack.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFCBD7529B8197300AAD9D6 /* RecipeCardBack.swift */; };
+		F805E9352B24119800E28BD5 /* Loading.json in Resources */ = {isa = PBXBuildFile; fileRef = F805E9342B24119800E28BD5 /* Loading.json */; };
 		F85286462AC0DC1900D2214C /* FavoriteRecipes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85286452AC0DC1900D2214C /* FavoriteRecipes.swift */; };
 		F85286482AD305CF00D2214C /* ScreenTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85286472AD305CF00D2214C /* ScreenTitle.swift */; };
 		F852864A2AD62E5200D2214C /* ScreenTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85286492AD62E5200D2214C /* ScreenTheme.swift */; };
+		F852864D2AD636E000D2214C /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = F852864C2AD636E000D2214C /* Lottie */; };
+		F852864F2AD6373100D2214C /* LottiePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F852864E2AD6373100D2214C /* LottiePlayer.swift */; };
 		F853D6AA2AA95CD200AB876C /* YourRecipesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F853D6A92AA95CD200AB876C /* YourRecipesView.swift */; };
+		F879B9E32B3766EF00F4826A /* RecipeLinkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F879B9E22B3766EF00F4826A /* RecipeLinkView.swift */; };
+		F879B9E52B37692D00F4826A /* IMG_3526.JPG in Resources */ = {isa = PBXBuildFile; fileRef = F879B9E42B37692D00F4826A /* IMG_3526.JPG */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -53,10 +58,15 @@
 		ADF53FBB29CF5A3A00995F7C /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		ADFCBD7329B818D700AAD9D6 /* RecipeCardFront.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeCardFront.swift; sourceTree = "<group>"; };
 		ADFCBD7529B8197300AAD9D6 /* RecipeCardBack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeCardBack.swift; sourceTree = "<group>"; };
+		F805E9342B24119800E28BD5 /* Loading.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = Loading.json; path = ../../../../Downloads/Loading.json; sourceTree = "<group>"; };
 		F85286452AC0DC1900D2214C /* FavoriteRecipes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteRecipes.swift; sourceTree = "<group>"; };
 		F85286472AD305CF00D2214C /* ScreenTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTitle.swift; sourceTree = "<group>"; };
 		F85286492AD62E5200D2214C /* ScreenTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTheme.swift; sourceTree = "<group>"; };
+		F852864E2AD6373100D2214C /* LottiePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottiePlayer.swift; sourceTree = "<group>"; };
 		F853D6A92AA95CD200AB876C /* YourRecipesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YourRecipesView.swift; sourceTree = "<group>"; };
+		F86440FB2C1F788A0056956B /* Grocery-Buddy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Grocery-Buddy-Info.plist"; sourceTree = SOURCE_ROOT; };
+		F879B9E22B3766EF00F4826A /* RecipeLinkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeLinkView.swift; sourceTree = "<group>"; };
+		F879B9E42B37692D00F4826A /* IMG_3526.JPG */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = IMG_3526.JPG; path = ../../../Downloads/IMG_3526.JPG; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +74,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F852864D2AD636E000D2214C /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,12 +108,16 @@
 		AD6324A92953F27E00131E6C /* Grocery Buddy */ = {
 			isa = PBXGroup;
 			children = (
+				F86440FB2C1F788A0056956B /* Grocery-Buddy-Info.plist */,
+				F805E9332B2410D500E28BD5 /* Lottie */,
 				ADF53FBB29CF5A3A00995F7C /* PersistenceController.swift */,
 				AD6324AA2953F27E00131E6C /* Grocery_BuddyApp.swift */,
 				ADF53FB829CF4E7500995F7C /* Model.xcdatamodeld */,
 				ADCA7B82295FEE890064E7D0 /* Views */,
 				AD6324BA2955111C00131E6C /* Models  */,
+				AD57A5692967D9250057A28D /* Edamam API */,
 				AD6324AE2953F27F00131E6C /* Assets.xcassets */,
+				F879B9E42B37692D00F4826A /* IMG_3526.JPG */,
 				AD897A30295E51B700E4A783 /* Icons.swift */,
 				AD6324B02953F27F00131E6C /* Preview Content */,
 			);
@@ -122,7 +137,6 @@
 			children = (
 				AD6324BB2955113500131E6C /* Grocery.swift */,
 				AD57A5652967D8AA0057A28D /* RecipeResponse.swift */,
-				AD57A5692967D9250057A28D /* Edamam API */,
 				ADA7B88F2A8E7E920081604E /* SelectedIngredients.swift */,
 				F85286452AC0DC1900D2214C /* FavoriteRecipes.swift */,
 			);
@@ -156,6 +170,7 @@
 			isa = PBXGroup;
 			children = (
 				AD9185212A942BB4008988A3 /* GroceryItemsView.swift */,
+				F852864E2AD6373100D2214C /* LottiePlayer.swift */,
 			);
 			path = GroceryListView;
 			sourceTree = "<group>";
@@ -172,10 +187,19 @@
 			path = RecipeView;
 			sourceTree = "<group>";
 		};
+		F805E9332B2410D500E28BD5 /* Lottie */ = {
+			isa = PBXGroup;
+			children = (
+				F805E9342B24119800E28BD5 /* Loading.json */,
+			);
+			path = Lottie;
+			sourceTree = "<group>";
+		};
 		F853D6A82AA95C5600AB876C /* YourRecipesView */ = {
 			isa = PBXGroup;
 			children = (
 				F853D6A92AA95CD200AB876C /* YourRecipesView.swift */,
+				F879B9E22B3766EF00F4826A /* RecipeLinkView.swift */,
 			);
 			path = YourRecipesView;
 			sourceTree = "<group>";
@@ -196,6 +220,9 @@
 			dependencies = (
 			);
 			name = "Grocery Buddy";
+			packageProductDependencies = (
+				F852864C2AD636E000D2214C /* Lottie */,
+			);
 			productName = "Grocery Buddy";
 			productReference = AD6324A72953F27E00131E6C /* Grocery Buddy.app */;
 			productType = "com.apple.product-type.application";
@@ -224,6 +251,9 @@
 				Base,
 			);
 			mainGroup = AD63249E2953F27E00131E6C;
+			packageReferences = (
+				F852864B2AD636E000D2214C /* XCRemoteSwiftPackageReference "lottie-spm" */,
+			);
 			productRefGroup = AD6324A82953F27E00131E6C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -240,6 +270,8 @@
 			files = (
 				AD6324B22953F27F00131E6C /* Preview Assets.xcassets in Resources */,
 				AD6324AF2953F27F00131E6C /* Assets.xcassets in Resources */,
+				F805E9352B24119800E28BD5 /* Loading.json in Resources */,
+				F879B9E52B37692D00F4826A /* IMG_3526.JPG in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,8 +299,10 @@
 				ADF53FBA29CF4E7500995F7C /* Model.xcdatamodeld in Sources */,
 				AD57A5682967D9190057A28D /* RequestManager.swift in Sources */,
 				ADA7B8902A8E7E920081604E /* SelectedIngredients.swift in Sources */,
+				F852864F2AD6373100D2214C /* LottiePlayer.swift in Sources */,
 				AD57A5662967D8AA0057A28D /* RecipeResponse.swift in Sources */,
 				AD9185222A942BB4008988A3 /* GroceryItemsView.swift in Sources */,
+				F879B9E32B3766EF00F4826A /* RecipeLinkView.swift in Sources */,
 				F853D6AA2AA95CD200AB876C /* YourRecipesView.swift in Sources */,
 				AD6324BC2955113500131E6C /* Grocery.swift in Sources */,
 			);
@@ -402,6 +436,7 @@
 				DEVELOPMENT_TEAM = QN76D24532;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Grocery-Buddy-Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -432,6 +467,7 @@
 				DEVELOPMENT_TEAM = QN76D24532;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Grocery-Buddy-Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -474,6 +510,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		F852864B2AD636E000D2214C /* XCRemoteSwiftPackageReference "lottie-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-spm.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F852864C2AD636E000D2214C /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F852864B2AD636E000D2214C /* XCRemoteSwiftPackageReference "lottie-spm" */;
+			productName = Lottie;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		ADF53FB829CF4E7500995F7C /* Model.xcdatamodeld */ = {

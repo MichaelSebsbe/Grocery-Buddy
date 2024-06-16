@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct RecipiesContentView: View {
+    @FocusState var hightlightSearch: Bool
     @State var searchTerm = ""
     @State var recipies: RecipeResponse?
     @State var scrollToTop = false
@@ -33,7 +34,7 @@ struct RecipiesContentView: View {
     var body: some View {
         NavigationView{
             VStack{
-                SearchBar(searchText: $searchTerm, recipies: $recipies, hasNewResults: $scrollToTop)
+                SearchBar(searchText: $searchTerm, recipies: $recipies, hasNewResults: $scrollToTop, inFocus: _hightlightSearch)
                     .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
                 
                 if scrollToTop == true {
@@ -65,12 +66,12 @@ struct RecipiesContentView: View {
     }
 }
 
-struct RecipiesContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        RecipiesContentView()
-            .previewDevice("iPhone 11")
-    }
-}
+//struct RecipiesContentView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        RecipiesContentView()
+//            .previewDevice("iPhone 11")
+//    }
+//}
 
 
 // MARK: - SearchBar
@@ -79,6 +80,7 @@ struct SearchBar: View {
     @Binding var searchText: String
     @Binding var recipies: RecipeResponse?
     @Binding var hasNewResults: Bool
+    @FocusState var inFocus: Bool
     
     var body: some View {
         HStack {
@@ -100,6 +102,7 @@ struct SearchBar: View {
                         }
                     }
                 }
+                .focused($inFocus)
             
             //cancel Button
             Button(action: {

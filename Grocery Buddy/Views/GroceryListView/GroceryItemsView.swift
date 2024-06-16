@@ -9,26 +9,84 @@ import SwiftUI
 
 struct GroceryItemsView: View {
     @EnvironmentObject var ingredientsManagedObject: SelectedIngredients
+    @Binding var tabSelection : Int 
+    
+    @State private var foundIngredients = [String: Ingredient]()
     
     var body: some View {
-        VStack{
+        VStack(alignment: .center){
             ScreenTitle(title: "Your Shopping List", imageSystemName: "cart.circle.fill", screenColor: .green)
-            ScrollView{
-                ForEach(Array(ingredientsManagedObject.ingredients.keys.sorted()), id: \.self){ category in
+            
+            if ingredientsManagedObject.ingredients.count == 0 {
+                Spacer()
+                LottieView(filename: "Loading.json")
+                    .frame(width:150,height: 150)
+                    .opacity(0.8)
+                Text("Add groceries by searching recipes ⬅️ groceries.")
+                    .font(.caption)
+                    .padding()
+                
+                Button("Search Recipe") {
+                            //button pressed
+                    self.tabSelection = 1
+                }
+                .tint(AppColors.mint)
+                .foregroundColor(.black)
+                .cornerRadius(100)
+                
+                
+                Spacer()
+                
+            } else {
+                if foundIngredients.count > 0 {
+                    //clear button
                     HStack{
+                        Button {
+                            for foundIngredient in foundIngredients{
+                                withAnimation(.easeOut) {
+                                    ingredientsManagedObject.remove(foundIngredient.value)
+                                    foundIngredients.removeValue(forKey: foundIngredient.key)
+                                }
+                            }
+                            
+                        } label: {
+                            HStack{
+                                Image(systemName: "checkmark.seal.fill")
+                                    .frame(width: 20, height: 20)
+                                Text("Clear Found")
+                            }
+                        }
+                        .tint(AppColors.red)
                         Spacer()
-                        GroceryCategoryView(category: category)
                     }
                     .padding(.horizontal)
-                    
-                    let ingredients = ingredientsManagedObject.ingredients[category]!
-                    let sortedIngredients = ingredients.values.sorted{$0.food! < $1.food!}
-                    
-                    ForEach(sortedIngredients, id:  \.self.foodId) { ingredient in
-                        GroceryView(ingredient: ingredient)
+                }
+                ScrollView{
+                    ForEach(Array(ingredientsManagedObject.ingredients.keys.sorted()), id: \.self){ category in
+                        HStack{
+                            Spacer()
+                            GroceryCategoryView(category: category)
+                        }
+                        .padding(.horizontal)
+                        
+                        let ingredients = ingredientsManagedObject.ingredients[category]!
+                        let sortedIngredients = ingredients.values.sorted{$0.food! < $1.food!}
+                        
+                        ForEach(sortedIngredients, id:  \.self.foodId) { ingredient in
+                            GroceryView(ingredient: ingredient){ isFound in
+                                if let id = ingredient.foodId{
+                                    if isFound{
+                                        foundIngredients[id] = ingredient
+                                    } else {
+                                        foundIngredients.removeValue(forKey: id)
+                                    }
+                                }
+                            }
                             .swipeActions(edge: .leading, allowsFullSwipe: true) {
                                 //add all to cart
                             }
+                        }
+                        
                     }
                 }
             }
@@ -63,8 +121,8 @@ struct GroceryCategoryViewPreview: PreviewProvider {
 
 struct GroceryView: View {
     @State var isFound = false
-    
     let ingredient: Ingredient
+    var callback : (Bool) -> Void
     
     var body: some View{
         HStack{
@@ -77,12 +135,13 @@ struct GroceryView: View {
             
             ChecklistView(isFound: $isFound, ingredient: ingredient)
                 .onTapGesture {
-                    withAnimation(.easeIn(duration: 0.5)){
+                    withAnimation(.snappy){
                         isFound.toggle()
+                        callback(isFound)
                     }
                 }
                 .if(isFound){
-                    $0.opacity(0.8)
+                    $0.opacity(0.9)
                 }
         }
         .padding(EdgeInsets(top: 0, leading: 5, bottom: 0, trailing: 5))

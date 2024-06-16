@@ -40,57 +40,70 @@ struct RecipeCardFront: View {
     
     
     var body: some View {
-        if (isFaceUp){
-            VStack (alignment: .trailing){
-                ZStack(alignment: .leading){
-                    Color(red: 1, green: 0.8, blue: 0.2)
-                        .cornerRadius(10)
-                        .shadow(color: Color(red: 0.2, green: 0.28, blue: 0.30, opacity: 0.3), radius: 2, x: 5, y: 5)
-                    
-                    VStack {
-                        HStack(alignment: .center){
-                            AsyncImage(url: URL(string: url)) { image in
-                                image.resizable()
-                            } placeholder: {
-                                
-                                ProgressView()
-                            }
-                            .frame(width: 126.0, height: 126.0)
+        VStack{
+            if (isFaceUp){
+                VStack (alignment: .trailing){
+                    ZStack(alignment: .leading){
+                        Color(red: 1, green: 0.8, blue: 0.2)
                             .cornerRadius(10)
-                            .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
-                            
-                            InfoBox(isFaceUp: $isFaceUp, recipe: recipe)
-                                .padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 10))
+                            .shadow(color: Color(red: 0.2, green: 0.28, blue: 0.30, opacity: 0.3), radius: 2, x: 5, y: 5)
+                        
+                        VStack {
+                            HStack(alignment: .center){
+                                AsyncImage(url: URL(string: url)) { image in
+                                    image.resizable()
+                                } placeholder: {
+                                    
+                                    ProgressView()
+                                }
+                                .frame(width: 126.0, height: 126.0)
+                                .cornerRadius(10)
+                                .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
+                                
+                                InfoBox(isFaceUp: $isFaceUp, recipe: recipe)
+                                    .padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 10))
+                            }
                         }
                     }
+                    .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
+                    Text(source)
+                        .multilineTextAlignment(.trailing)
+                        .italic()
+                        .font(.body)
+                        .fontWeight(.light)
+                        .padding(EdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 15))
+                    
                 }
-                .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
-                Text(source)
-                    .multilineTextAlignment(.trailing)
-                    .italic()
-                    .font(.body)
-                    .fontWeight(.light)
-                    .padding(EdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 15))
+                .transition(.asymmetric(insertion: .identity, removal: .opacity))
+                //            .onTapGesture {
+                //                //
+                //            }
+                //            .onLongPressGesture(perform: {
+                //                isFaceUp.toggle()
+                //            })
                 
-            }
-//            .onTapGesture {
-//                //
-//            }
-//            .onLongPressGesture(perform: {
-//                isFaceUp.toggle()
-//            })
-
-        }else{
-            if let totalWeight = recipe.totalWeight,
-               let totalNutrients = recipe.totalNutrients,
-               let totalDaily = recipe.totalDaily{
-                CardBack(totalWeight: totalWeight, totalNutrients: totalNutrients, totalDaily: totalDaily)
-                    .onTapGesture {
-                        isFaceUp.toggle()
-                    }
+            }else{
+                if let totalWeight = recipe.totalWeight,
+                   let totalNutrients = recipe.totalNutrients,
+                   let totalDaily = recipe.totalDaily{
+                    CardBack(totalWeight: totalWeight, totalNutrients: totalNutrients, totalDaily: totalDaily)
+                        .onTapGesture {
+                            withAnimation(.spring) {
+                                isFaceUp.toggle()
+                            }
+                            
+                        }
+                        .rotation3DEffect(.degrees(-180), axis: (x: 1, y: 0, z: 0))
+                        .transition(.asymmetric(insertion: .identity, removal: .opacity))
+                    
+                }
                 
             }
         }
+        .rotation3DEffect(
+                    .degrees(!isFaceUp ? 180 : 0),
+                    axis: (x: 1, y: 0, z: 0)
+                )
     }
 
 }
@@ -280,7 +293,10 @@ struct InfoBox: View {
                 Spacer(minLength: 0)
                 Button {
                     //flips the card
-                    isFaceUp = false;
+                    withAnimation {
+                        isFaceUp = false
+                    }
+                    
                 } label: {
                     Image(systemName: "arrow.down.right.square.fill")
                         .symbolRenderingMode(.palette)

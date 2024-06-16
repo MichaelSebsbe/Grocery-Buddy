@@ -65,6 +65,7 @@ struct RecipeDetailView: View {
                 Rectangle()
                     .foregroundColor(.yellow)
                     .cornerRadius(20)
+                    .shadow(color: Color(red: 0.2, green: 0.28, blue: 0.30, opacity: 0.3), radius: 2, x: 5, y: 5)
     
                 VStack() {
                     HStack (alignment: .center){
@@ -110,7 +111,7 @@ struct RecipeDetailView: View {
                 
             }.padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
             
-            HStack{
+            HStack(){
                 Button("Select All") {
                     //add all ingridents to grocery cart
                     withAnimation(.easeIn(duration: 0.5)){
@@ -122,10 +123,15 @@ struct RecipeDetailView: View {
                     }
                     
                 }
+                .bold()
+                .cornerRadius(100)
+                .shadow(color: Color(red: 0.2, green: 0.28, blue: 0.30, opacity: 0.3), radius: 2, x: 5, y: 5)
                 
                 Text("\(selectedIngredients.count) out of \(sanitizedIngredients.count)")
                     .frame(maxWidth: .infinity, alignment: .center)
                     .fontWeight(.semibold)
+                    .animation(nil)
+                
                 Button("Save"){
                     //selectedIngredientsEnvObj.ingredients.merging(selectedIngredients, uniquingKeysWith: + )
                     save()
@@ -133,8 +139,13 @@ struct RecipeDetailView: View {
                 }
                 .tint(.yellow)
                 .foregroundColor(.black)
+                .bold()
+                .cornerRadius(100)
+
                 
-            }.padding(EdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 10))
+            }.padding(
+                EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
+            )
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
             
@@ -207,6 +218,7 @@ struct IngredientView: View {
         HStack{
             AsyncImage(url: URL(string: imageURL)) { image in
                 image.resizable()
+                
             } placeholder: {
                 ProgressView()
             }

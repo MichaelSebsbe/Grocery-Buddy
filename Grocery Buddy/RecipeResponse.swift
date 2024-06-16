@@ -53,7 +53,7 @@ struct Recipe: Codable{
     let cuisineType: [String]?
     let mealType: [String?]
     let dishType: [String]?
-    let instructions: [String?]?
+    let instructions: [String]?
     let tags: [String?]?
     let externalId: String?
     let totalNutrients: [String:NutrientsInfo]?
